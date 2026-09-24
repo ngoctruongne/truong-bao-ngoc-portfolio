@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TBN Admin Control Center // Quản Trị Bảo Mật</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #050814;
+      --card: #0d152a;
+      --card-hover: #121c38;
+      --border: rgba(255, 255, 255, 0.08);
+      --core: #f47b1a;
+      --core-hover: #ff8b33;
+      --cyan: #00f0ff;
+      --text: #f0f4fd;
+      --muted: #7987a5;
+      --font-body: 'Be Vietnam Pro', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+      --radius: 12px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ========================================================
+       1. MÀN HÌNH ĐĂNG NHẬP CHUYÊN DỤNG (DEDICATED LOGIN SCREEN)
+       ======================================================== */
+    #screen-login {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(244, 123, 26, 0.1) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
+        #050814;
+      padding: 24px;
+      position: relative;
+    }
+
+    .login-wrapper {
+      width: 440px;
+      max-width: 100%;
+      background: var(--card);
+      border: 1px solid rgba(244, 123, 26, 0.3);
+      border-radius: 16px;
+      padding: 42px 36px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(244, 123, 26, 0.12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--core), var(--cyan));
+    }
+
+    .login-logo-wrap {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(244, 123, 26, 0.12);
+      border: 1.5px solid var(--core);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      box-shadow: 0 0 25px rgba(244, 123, 26, 0.35);
+    }
+    .login-logo-wrap i {
+      font-size: 2.2rem;
+      color: var(--core);
+      animation: spinClockwise 25s linear infinite;
+    }
+    @keyframes spinClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .login-badge-secure {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-code);
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 3px 12px;
+      border-radius: 99px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .login-subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+    .input-icon-wrap {
+      position: relative;
+    }
+    .input-icon-wrap i.prefix-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: rgba(5, 8, 20, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    .input-icon-wrap input {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+    .toggle-pass-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .toggle-pass-btn:hover { color: var(--core); }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--core);
+      box-shadow: 0 0 16px rgba(244, 123, 26, 0.3);
+    }
+
+    .btn-login-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--core), #e0501f);
+      border: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 800;
+      padding: 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 22px rgba(244, 123, 26, 0.4);
+      transition: var(--transition);
+      margin-top: 8px;
+    }
+    .btn-login-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px var(--core);
+    }
+    .btn-login-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-footer-hint {
+      margin-top: 24px;
+      font-size: 0.76rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      line-height: 1.5;
+    }
+    .login-footer-hint i { color: #f59e0b; margin-right: 4px; }
+
+    /* ========================================================
+       2. MÀN HÌNH DASHBOARD QUẢN TRỊ (ADMIN DASHBOARD)
+       ======================================================== */
+    #screen-dashboard {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .admin-nav {
+      height: 66px;
+      background: rgba(13, 21, 42, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.15rem;
+    }
+    .brand-wrap i { color: var(--core); font-size: 1.35rem; }
+    .brand-wrap span { color: var(--core); }
+    .admin-role-badge {
+      font-family: var(--font-code);
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(244, 123, 26, 0.12);
+      border: 1px solid rgba(244, 123, 26, 0.35);
+      color: var(--core);
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .tab-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .tab-btn.active {
+      color: var(--core);
+      background: rgba(244, 123, 26, 0.12);
+      border-color: rgba(244, 123, 26, 0.35);
+    }
+
+    .nav-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .user-avatar-mini {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--core);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+    .btn-link-site {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-link-site:hover { color: var(--cyan); }
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 15px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-logout:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+    /* DASHBOARD CONTENT */
+    .dashboard-body {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      flex: 1;
+    }
+
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* TOOLBAR & SEARCH */
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .dash-title h2 { font-size: 1.5rem; font-weight: 900; }
+    .dash-title p { font-size: 0.85rem; color: var(--muted); margin-top: 3px; }
+    .dash-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .search-box {
+      position: relative;
+      width: 280px;
+    }
+    .search-box i {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .search-box input {
+      padding-left: 36px;
+      height: 40px;
+    }
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--core), #e0501f);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(244, 123, 26, 0.35);
+      transition: var(--transition);
+    }
+    .btn-action-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--core);
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      font-family: var(--font-code);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--card-hover); }
+
+    .post-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .post-thumb {
+      width: 56px;
+      height: 40px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #111a30;
+      border: 1px solid var(--border);
+    }
+    .post-meta-title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3px;
+      max-width: 420px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .post-meta-slug {
+      font-family: var(--font-code);
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .badge-src {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-code);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+    .badge-src-n8n {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: var(--cyan);
+    }
+    .badge-src-cms {
+      background: rgba(244, 123, 26, 0.12);
+      border: 1px solid rgba(244, 123, 26, 0.35);
+      color: var(--core);
+    }
+
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .action-btn:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+    .action-edit:hover { background: var(--core); border-color: var(--core); }
+    .action-del:hover { background: #ef4444; border-color: #ef4444; }
+
+    /* TAB N8N */
+    .card-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 24px;
+    }
+    .card-panel-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(244, 123, 26, 0.15);
+      border: 1px solid rgba(244, 123, 26, 0.35);
+      color: var(--core);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+    .card-icon-cyan {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: rgba(0, 240, 255, 0.35);
+      color: var(--cyan);
+    }
+
+    .key-display-box {
+      background: rgba(5, 8, 20, 0.9);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 12px 18px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-code);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+    .btn-copy-tag {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--cyan);
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-copy-tag:hover { background: var(--cyan); color: #000; }
+
+    pre code {
+      display: block;
+      background: #04060d;
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      color: #a5b4fc;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    /* MODAL EDITOR */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 20, 0.88);
+      backdrop-filter: blur(18px);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      width: 920px;
+      max-width: 96vw;
+      max-height: 92vh;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+    }
+    .modal-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 { font-size: 1.25rem; font-weight: 800; }
+    .modal-body {
+      padding: 24px 28px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .modal-footer {
+      padding: 18px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+    /* TOAST */
+    .toast-pop {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-pop.show { transform: translateY(0); opacity: 1; }
+    .toast-pop.error { background: #ef4444; }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       1. MÀN HÌNH ĐĂNG NHẬP CHUYÊN DỤNG (CHỈ ADMIN)
+       ========================================== -->
+  <section id="screen-login">
+    <div class="login-wrapper">
+      <div class="login-logo-wrap">
+        <i class="fa-solid fa-atom"></i>
+      </div>
+
+      <div class="login-badge-secure">
+        <i class="fa-solid fa-shield-halved"></i> RESTRICTED // ADMIN ONLY
+      </div>
+
+      <h1 class="login-title">TBN Central CMS</h1>
+      <p class="login-subtitle">Hệ thống quản trị nội dung &amp; điều phối n8n tự động hóa dành riêng cho Quản trị viên</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Tên đăng nhập Admin</label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-user-shield prefix-icon"></i>
+            <input type="text" id="loginUsername" class="form-input" placeholder="admin" value="admin" required autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mật khẩu Quản trị</label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-lock prefix-icon"></i>
+            <input type="password" id="loginPassword" class="form-input" placeholder="Nhập mật khẩu admin..." required autocomplete="current-password" />
+            <button type="button" class="toggle-pass-btn" id="togglePassBtn" title="Hiện/Ẩn mật khẩu">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login-submit" id="btnLoginSubmit">
+          <i class="fa-solid fa-key"></i> Xác Thực Đăng Nhập
+        </button>
+      </form>
+
+      <div class="login-footer-hint">
+        <i class="fa-solid fa-shield"></i> Cơ chế chống dò mật khẩu: Nhập sai quá 5 lần tài khoản sẽ tự động khóa 15 phút.
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       2. MÀN HÌNH DASHBOARD QUẢN TRỊ (ADMIN DASHBOARD)
+       ========================================== -->
+  <div id="screen-dashboard">
+
+    <!-- TOPBAR -->
+    <header class="admin-nav">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="#" class="brand-wrap">
+          <i class="fa-solid fa-atom"></i>
+          <span>TBN</span> CMS CORE
+        </a>
+        <span class="admin-role-badge"><i class="fa-solid fa-lock"></i> ADMIN ACCESS</span>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="tab-btn active" data-tab="posts"><i class="fa-solid fa-newspaper"></i> Quản Lý Bài Viết</button>
+        <button class="tab-btn" data-tab="n8n"><i class="fa-solid fa-robot"></i> Cấu Hình n8n &amp; API</button>
+        <button class="tab-btn" data-tab="security"><i class="fa-solid fa-shield-halved"></i> Tài Khoản &amp; Bảo Mật</button>
+      </nav>
+
+      <div class="nav-user-actions">
+        <div class="user-profile-badge">
+          <div class="user-avatar-mini" id="navAvatarChar">A</div>
+          <span id="navAdminName">Trương Bảo Ngọc</span>
+        </div>
+        <a href="blog.html" target="_blank" class="btn-link-site"><i class="fa-solid fa-arrow-up-right-from-square"></i> Xem Blog Live</a>
+        <button class="btn-logout" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <main class="dashboard-body">
+
+      <!-- TAB 1: DANH SÁCH BÀI VIẾT -->
+      <section class="tab-section active" id="tab-posts">
+        <div class="dash-header">
+          <div class="dash-title">
+            <h2>Quản Trị Bài Viết</h2>
+            <p>Toàn quyền quản lý bài viết Admin viết tay và bài viết do n8n đẩy tự động qua API</p>
+          </div>
+          <div class="dash-controls">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="postSearch" class="form-input" placeholder="Tìm kiếm theo tiêu đề, tags..." />
+            </div>
+            <button class="btn-action-primary" id="btnOpenCreate"><i class="fa-solid fa-plus"></i> Viết Bài Mới</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Bài viết</th>
+                <th>Chuyên mục</th>
+                <th>Nguồn gốc</th>
+                <th>Lượt xem</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="postTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--muted); padding: 30px;">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu từ database SQLite...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 2: CẤU HÌNH N8N & API -->
+      <section class="tab-section" id="tab-n8n">
+        <div class="card-panel">
+          <div class="card-panel-header">
+            <div class="card-icon card-icon-cyan"><i class="fa-solid fa-robot"></i></div>
+            <div>
+              <h2 style="font-size: 1.35rem; font-weight: 800;">Tự Động Hóa Xuất Bản Bài Viết Bằng n8n</h2>
+              <p style="font-size: 0.85rem; color: var(--muted); margin-top: 2px;">
+                Cấu hình API Key và Endpoint trong Node <b>HTTP Request</b> của n8n để tự động nhận bài viết từ AI (ChatGPT, Claude, Perplexity...)
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <label class="form-label"><i class="fa-solid fa-link"></i> Webhook Endpoint URL (Phương thức POST)</label>
+            <div class="key-display-box">
+              <span id="endpointUrl" style="color: var(--cyan);">http://localhost:3000/api/posts</span>
+              <button class="btn-copy-tag" onclick="copyText('endpointUrl')"><i class="fa-solid fa-copy"></i> Sao chép</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="form-label" style="margin: 0;"><i class="fa-solid fa-key"></i> Secret API Key (Header: <code>x-api-key</code>)</label>
+              <button id="btnRegenKey" style="background: none; border: none; color: var(--core); font-size: 0.78rem; cursor: pointer; font-weight: 700;">
+                <i class="fa-solid fa-arrows-rotate"></i> Tạo lại Key mới
+              </button>
+            </div>
+            <div class="key-display-box">
+              <span id="apiKeyDisplay" style="color: #f59e0b;">Đang tải...</span>
+              <button class="btn-copy-tag" onclick="copyText('apiKeyDisplay')"><i class="fa-solid fa-copy"></i> Sao chép</button>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 6px;">
+              <i class="fa-solid fa-code"></i> Cấu trúc JSON Body mẫu cho Node HTTP Request trong n8n:
+            </h4>
+            <pre><code>{
+  "title": "={{ $json.title }}",
+  "excerpt": "={{ $json.excerpt }}",
+  "content": "={{ $json.content_html }}",
+  "category": "Performance Ads", // hoặc "Brand Strategy", "Trade Marketing", "Data Analytics", "E-Commerce"
+  "cover_image": "assets/images/portfolio-banner.jpg",
+  "read_time": "5 phút đọc",
+  "tags": "AI, Marketing, Automation",
+  "status": "published"
+}</code></pre>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 6px;">
+              <i class="fa-solid fa-terminal"></i> Lệnh cURL kiểm tra nhanh:
+            </h4>
+            <pre><code id="curlCode">curl -X POST http://localhost:3000/api/posts \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: [API_KEY]" \
+  -d '{"title":"Test bài viết từ n8n","content":"&lt;h2&gt;Thành công&lt;/h2&gt;&lt;p&gt;Bài viết đã lên CMS!&lt;/p&gt;","category":"Performance Ads"}'</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: TÀI KHOẢN & BẢO MẬT -->
+      <section class="tab-section" id="tab-security">
+        <div class="grid-2">
+          
+          <!-- FORM ĐỔI MẬT KHẨU -->
+          <div class="card-panel">
+            <div class="card-panel-header">
+              <div class="card-icon"><i class="fa-solid fa-key"></i></div>
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800;">Đổi Mật Khẩu Quản Trị</h3>
+                <p style="font-size: 0.8rem; color: var(--muted);">Bảo vệ tài khoản bằng mật khẩu mạnh có chữ hoa, số và ký tự đặc biệt</p>
+              </div>
+            </div>
+
+            <form id="changePassForm">
+              <div class="form-group">
+                <label class="form-label">Mật khẩu hiện tại</label>
+                <input type="password" id="oldPass" class="form-input" placeholder="Nhập mật khẩu cũ..." required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mật khẩu mới (ít nhất 6 ký tự)</label>
+                <input type="password" id="newPass" class="form-input" placeholder="Nhập mật khẩu mới..." required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu mới</label>
+                <input type="password" id="confirmNewPass" class="form-input" placeholder="Nhập lại mật khẩu mới..." required />
+              </div>
+              <button type="submit" class="btn-action-primary" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-lock"></i> Cập Nhật Mật Khẩu
+              </button>
+            </form>
+          </div>
+
+          <!-- FORM THÔNG TIN TÀI KHOẢN -->
+          <div class="card-panel">
+            <div class="card-panel-header">
+              <div class="card-icon card-icon-cyan"><i class="fa-solid fa-user-gear"></i></div>
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800;">Hồ Sơ Quản Trị Viên</h3>
+                <p style="font-size: 0.8rem; color: var(--muted);">Tên hiển thị tác giả và tên tài khoản đăng nhập</p>
+              </div>
+            </div>
+
+            <form id="profileForm">
+              <div class="form-group">
+                <label class="form-label">Tên tác giả hiển thị</label>
+                <input type="text" id="profName" class="form-input" value="Trương Bảo Ngọc" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tên đăng nhập (Username)</label>
+                <input type="text" id="profUsername" class="form-input" value="admin" required />
+              </div>
+              <div style="background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.82rem; color: #cbd5e1;">
+                <i class="fa-solid fa-circle-info" style="color: var(--cyan); margin-right: 6px;"></i>
+                Quyền hạn: <b>Toàn quyền Admin (Superadmin)</b>. Có quyền chỉnh sửa, xóa bài viết và tạo API Key.
+              </div>
+              <button type="submit" class="btn-action-primary" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ==========================================
+       3. MODAL SOẠN THẢO BÀI VIẾT (EDITOR)
+       ========================================== -->
+  <div class="modal-overlay" id="editorModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Viết Bài Viết Mới</h3>
+        <button class="action-btn" id="btnCloseEditor"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="postForm" class="modal-body">
+        <input type="hidden" id="editPostId" value="" />
+
+        <div class="form-group">
+          <label class="form-label">Tiêu đề bài viết (*)</label>
+          <input type="text" id="fTitle" class="form-input" placeholder="Nhập tiêu đề hấp dẫn..." required />
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Chuyên mục</label>
+            <select id="fCategory" class="form-select">
+              <option value="Performance Ads">Performance Ads Engine</option>
+              <option value="Brand Strategy">Brand Strategy &amp; Visual</option>
+              <option value="Trade Marketing">Trade Marketing &amp; O2O Retail</option>
+              <option value="Data Analytics">Data Intelligence &amp; Analytics</option>
+              <option value="E-Commerce">E-Commerce Growth</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Thời gian đọc ước tính</label>
+            <input type="text" id="fReadTime" class="form-input" value="5 phút đọc" placeholder="Vd: 6 phút đọc" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Ảnh bìa bài viết</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="fCover" class="form-input" placeholder="assets/images/... hoặc URL ảnh" value="assets/images/portfolio-banner.jpg" />
+              <label class="btn-secondary" style="white-space: nowrap; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-upload"></i> Tải ảnh
+                <input type="file" id="fileUpload" accept="image/*" style="display: none;" />
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Thẻ nhãn Tags (cách nhau dấu phẩy)</label>
+            <input type="text" id="fTags" class="form-input" placeholder="Meta Ads, ROAS, AI, O2O..." />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Trích dẫn tóm tắt bài viết (Excerpt)</label>
+          <textarea id="fExcerpt" class="form-textarea" rows="2" placeholder="Tóm tắt ngắn gọn nội dung bài viết 1-2 câu..."></textarea>
+        </div>
+
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Nội dung bài viết (Hỗ trợ định dạng HTML chuyên nghiệp) (*)</label>
+          <textarea id="fContent" class="form-textarea" style="height: 240px; font-family: var(--font-code); font-size: 0.85rem;" placeholder="<h2>1. Tiêu đề mục</h2><p>Nội dung chi tiết...</p>" required></textarea>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Trạng thái xuất bản</label>
+            <select id="fStatus" class="form-select">
+              <option value="published">Xuất bản ngay (Published)</option>
+              <option value="draft">Lưu bản nháp (Draft)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Đường dẫn tĩnh (Slug - Để trống để tự tạo)</label>
+            <input type="text" id="fSlug" class="form-input" placeholder="tu-dong-tao-tu-tieu-de" />
+          </div>
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btnCancelEdit">Hủy bỏ</button>
+        <button type="submit" form="postForm" class="btn-action-primary" id="btnSubmitPost">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Lưu Bài Viết
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-pop" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Thành công!</span></div>
+
+  <script>
+    let authToken = localStorage.getItem('tbn_admin_token') || null;
+    let currentAdmin = null;
+
+    const screenLogin = document.getElementById('screen-login');
+    const screenDashboard = document.getElementById('screen-dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const loginUsername = document.getElementById('loginUsername');
+    const loginPassword = document.getElementById('loginPassword');
+    const btnLoginSubmit = document.getElementById('btnLoginSubmit');
+    const togglePassBtn = document.getElementById('togglePassBtn');
+
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    function showToast(msg, isError = false) {
+      toastMsg.textContent = msg;
+      toast.className = 'toast-pop show' + (isError ? ' error' : '');
+      setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+
+    // Toggle ẩn/hiện mật khẩu
+    togglePassBtn.addEventListener('click', () => {
+      const isPass = loginPassword.type === 'password';
+      loginPassword.type = isPass ? 'text' : 'password';
+      togglePassBtn.innerHTML = isPass ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+    });
+
+    // ==========================================
+    // KIỂM TRA PHIÊN ĐĂNG NHẬP KHI TẢI TRANG
+    // ==========================================
+    async function checkAuthSession() {
+      if (!authToken) {
+        showLoginScreen();
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success && data.admin) {
+          currentAdmin = data.admin;
+          showDashboardScreen(data.admin, data.apiKey);
+        } else {
+          // Token không hợp lệ hoặc hết hạn
+          localStorage.removeItem('tbn_admin_token');
+          authToken = null;
+          showLoginScreen();
+        }
+      } catch (err) {
+        showLoginScreen();
+      }
+    }
+
+    function showLoginScreen() {
+      screenLogin.style.display = 'flex';
+      screenDashboard.style.display = 'none';
+      loginPassword.value = '';
+    }
+
+    function showDashboardScreen(admin, apiKey) {
+      screenLogin.style.display = 'none';
+      screenDashboard.style.display = 'flex';
+
+      document.getElementById('navAdminName').textContent = admin.name || admin.username;
+      document.getElementById('navAvatarChar').textContent = (admin.name || admin.username).charAt(0).toUpperCase();
+      document.getElementById('profName').value = admin.name || '';
+      document.getElementById('profUsername').value = admin.username || '';
+
+      if (apiKey) {
+        document.getElementById('apiKeyDisplay').textContent = apiKey;
+        document.getElementById('endpointUrl').textContent = `${window.location.origin}/api/posts`;
+        updateCurlCode(apiKey);
+      }
+
+      loadPosts();
+      loadSettings();
+    }
+
+    // ==========================================
+    // XỬ LÝ ĐĂNG NHẬP
+    // ==========================================
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btnLoginSubmit.disabled = true;
+      btnLoginSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: loginUsername.value.trim(),
+            password: loginPassword.value
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          authToken = data.token;
+          currentAdmin = data.admin;
+          localStorage.setItem('tbn_admin_token', authToken);
+          showToast(`Xin chào ${data.admin.name || data.admin.username}!`);
+          showDashboardScreen(data.admin, data.apiKey);
+        } else {
+          showToast(data.error || 'Đăng nhập thất bại', true);
+        }
+      } catch (err) {
+        showToast('Không thể kết nối đến máy chủ!', true);
+      } finally {
+        btnLoginSubmit.disabled = false;
+        btnLoginSubmit.innerHTML = '<i class="fa-solid fa-key"></i> Xác Thực Đăng Nhập';
+      }
+    });
+
+    // ==========================================
+    // ĐĂNG XUẤT
+    // ==========================================
+    document.getElementById('btnLogout').addEventListener('click', async () => {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+      } catch (e) {}
+      localStorage.removeItem('tbn_admin_token');
+      authToken = null;
+      showToast('Đã đăng xuất tài khoản quản trị.');
+      showLoginScreen();
+    });
+
+    // ==========================================
+    // CHUYỂN TABS DASHBOARD
+    // ==========================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        if (tab === 'n8n') loadSettings();
+        if (tab === 'posts') loadPosts();
+      });
+    });
+
+    // ==========================================
+    // CẤU HÌNH N8N & API KEY
+    // ==========================================
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('apiKeyDisplay').textContent = data.apiKey;
+          document.getElementById('endpointUrl').textContent = `${window.location.origin}/api/posts`;
+          updateCurlCode(data.apiKey);
+        }
+      } catch (err) {}
+    }
+
+    function updateCurlCode(apiKey) {
+      const curl = `curl -X POST ${window.location.origin}/api/posts \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: ${apiKey}" \\
+  -d '{"title":"Bài viết mới từ n8n","content":"<h2>Nội dung</h2><p>Tự động hóa hoàn hảo!</p>","category":"Performance Ads"}'`;
+      document.getElementById('curlCode').textContent = curl;
+    }
+
+    document.getElementById('btnRegenKey').addEventListener('click', async () => {
+      if (!confirm('Bạn có chắc muốn tạo lại API Key mới? Các n8n workflow cũ đang dùng Key hiện tại sẽ cần cập nhật key mới!')) return;
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Đã tạo API Key mới thành công!');
+          loadSettings();
+        }
+      } catch (e) {
+        showToast('Lỗi khi tạo lại Key', true);
+      }
+    });
+
+    function copyText(elemId) {
+      const txt = document.getElementById(elemId).textContent;
+      navigator.clipboard.writeText(txt).then(() => {
+        showToast('Đã sao chép vào bộ nhớ tạm!');
+      });
+    }
+
+    // ==========================================
+    // QUẢN LÝ BÀI VIẾT (CRUD POSTS)
+    // ==========================================
+    const postTableBody = document.getElementById('postTableBody');
+    const postSearch = document.getElementById('postSearch');
+
+    async function loadPosts() {
+      try {
+        const search = postSearch.value.trim();
+        const res = await fetch(`/api/posts?all=true&search=${encodeURIComponent(search)}`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderPostsTable(data.posts);
+        }
+      } catch (err) {
+        postTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:20px;">Lỗi nạp bài viết từ SQLite</td></tr>`;
+      }
+    }
+
+    function renderPostsTable(posts) {
+      if (!posts || posts.length === 0) {
+        postTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--muted); padding:30px;">Chưa có bài viết nào. Hãy bấm "Viết Bài Mới" hoặc bắn bài từ n8n!</td></tr>`;
+        return;
+      }
+
+      postTableBody.innerHTML = posts.map(p => `
+        <tr>
+          <td>
+            <div class="post-cell">
+              <img src="${p.cover_image || 'assets/images/portfolio-banner.jpg'}" class="post-thumb" onerror="this.src='assets/images/portfolio-banner.jpg'" />
+              <div>
+                <div class="post-meta-title">${escapeHtml(p.title)}</div>
+                <div class="post-meta-slug">/${p.slug}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span style="font-size: 0.82rem; font-weight:700; color: var(--core);">${p.category}</span>
+          </td>
+          <td>
+            ${p.source === 'n8n' 
+              ? '<span class="badge-src badge-src-n8n"><i class="fa-solid fa-robot"></i> n8n Automation</span>' 
+              : '<span class="badge-src badge-src-cms"><i class="fa-solid fa-user-pen"></i> Admin CMS</span>'}
+          </td>
+          <td>
+            <span style="font-family: var(--font-code); font-weight:700;">${p.views || 0}</span>
+          </td>
+          <td style="font-size: 0.8rem; color: var(--muted);">
+            ${p.created_at ? p.created_at.split(' ')[0] : 'Vừa xong'}
+          </td>
+          <td>
+            <div class="table-actions">
+              <a href="blog-detail.html?slug=${p.slug}" target="_blank" class="action-btn" title="Xem trước bài viết"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              <button class="action-btn action-edit" onclick="openEditPost(${p.id})" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-btn action-del" onclick="deletePost(${p.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    postSearch.addEventListener('input', debounce(() => loadPosts(), 300));
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // ==========================================
+    // SOẠN THẢO BÀI VIẾT (MODAL EDITOR)
+    // ==========================================
+    const editorModal = document.getElementById('editorModal');
+    const postForm = document.getElementById('postForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const editPostId = document.getElementById('editPostId');
+    const fTitle = document.getElementById('fTitle');
+    const fCategory = document.getElementById('fCategory');
+    const fReadTime = document.getElementById('fReadTime');
+    const fCover = document.getElementById('fCover');
+    const fTags = document.getElementById('fTags');
+    const fExcerpt = document.getElementById('fExcerpt');
+    const fContent = document.getElementById('fContent');
+    const fStatus = document.getElementById('fStatus');
+    const fSlug = document.getElementById('fSlug');
+
+    document.getElementById('btnOpenCreate').addEventListener('click', () => {
+      modalTitle.textContent = 'Viết Bài Viết Mới';
+      editPostId.value = '';
+      postForm.reset();
+      fCover.value = 'assets/images/portfolio-banner.jpg';
+      fReadTime.value = '5 phút đọc';
+      editorModal.classList.add('open');
+    });
+
+    document.getElementById('btnCloseEditor').addEventListener('click', () => editorModal.classList.remove('open'));
+    document.getElementById('btnCancelEdit').addEventListener('click', () => editorModal.classList.remove('open'));
+
+    // TẢI ẢNH TỪ MÁY TÍNH
+    document.getElementById('fileUpload').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          showToast('Đang tải ảnh lên server...');
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ imageBase64: reader.result })
+          });
+          const data = await res.json();
+          if (data.success) {
+            fCover.value = data.url;
+            showToast('Tải ảnh thành công!');
+          } else {
+            showToast(data.error || 'Lỗi tải ảnh', true);
+          }
+        } catch (err) {
+          showToast('Lỗi upload ảnh', true);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // LƯU BÀI VIẾT
+    postForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = editPostId.value;
+      const payload = {
+        title: fTitle.value.trim(),
+        category: fCategory.value,
+        read_time: fReadTime.value.trim(),
+        cover_image: fCover.value.trim(),
+        tags: fTags.value.trim(),
+        excerpt: fExcerpt.value.trim(),
+        content: fContent.value.trim(),
+        status: fStatus.value,
+        slug: fSlug.value.trim() || undefined,
+        source: 'cms'
+      };
+
+      try {
+        const url = id ? `/api/posts/${id}` : '/api/posts';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(id ? 'Đã cập nhật bài viết!' : 'Đã đăng bài viết mới!');
+          editorModal.classList.remove('open');
+          loadPosts();
+        } else {
+          showToast(data.error || 'Lỗi xử lý', true);
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    });
+
+    window.openEditPost = async function(id) {
+      try {
+        const res = await fetch(`/api/posts/${id}`);
+        const data = await res.json();
+        if (data.success && data.post) {
+          const p = data.post;
+          modalTitle.textContent = 'Chỉnh Sửa Bài Viết';
+          editPostId.value = p.id;
+          fTitle.value = p.title || '';
+          fCategory.value = p.category || 'Performance Ads';
+          fReadTime.value = p.read_time || '5 phút đọc';
+          fCover.value = p.cover_image || '';
+          fTags.value = p.tags || '';
+          fExcerpt.value = p.excerpt || '';
+          fContent.value = p.content || '';
+          fStatus.value = p.status || 'published';
+          fSlug.value = p.slug || '';
+          editorModal.classList.add('open');
+        }
+      } catch (e) {
+        showToast('Không thể tải bài viết', true);
+      }
+    };
+
+    window.deletePost = async function(id) {
+      if (!confirm('Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác!')) return;
+      try {
+        const res = await fetch(`/api/posts/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Đã xóa bài viết thành công!');
+          loadPosts();
+        } else {
+          showToast(data.error || 'Lỗi khi xóa bài', true);
+        }
+      } catch (e) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    };
+
+    // ==========================================
+    // ĐỔI MẬT KHẨU & HỒ SƠ ADMIN
+    // ==========================================
+    document.getElementById('changePassForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const oldPassword = document.getElementById('oldPass').value;
+      const newPassword = document.getElementById('newPass').value;
+      const confirmPass = document.getElementById('confirmNewPass').value;
+
+      if (newPassword !== confirmPass) {
+        showToast('Mật khẩu xác nhận không khớp!', true);
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ oldPassword, newPassword })
+        });
+        const data = await res.json();
+        if (data.success) {
+          authToken = data.token;
+          localStorage.setItem('tbn_admin_token', authToken);
+          showToast(data.message || 'Đổi mật khẩu thành công!');
+          document.getElementById('changePassForm').reset();
+        } else {
+          showToast(data.error || 'Đổi mật khẩu thất bại', true);
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('profName').value.trim();
+      const username = document.getElementById('profUsername').value.trim();
+
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ name, username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Đã lưu thông tin hồ sơ Admin!');
+          document.getElementById('navAdminName').textContent = name;
+        } else {
+          showToast(data.error || 'Lỗi cập nhật', true);
+        }
+      } catch (err) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    });
+
+    // Khởi chạy kiểm tra phiên
+    checkAuthSession();
+  </script>
+</body>
+</html>

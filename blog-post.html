@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài Viết | Trương Bảo Ngọc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .post-wrap { max-width: 760px; margin: 0 auto; padding: 130px 24px 100px; }
+
+    .post-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text2); font-size: 0.88rem; font-weight: 500;
+      margin-bottom: 36px; transition: var(--transition);
+      text-decoration: none;
+    }
+    .post-back:hover { color: var(--accent2); }
+    .post-back i { font-size: 0.8rem; }
+
+    .post-meta {
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .post-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 13px; border-radius: 99px;
+      font-size: 0.74rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .post-tag.tips    { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .post-tag.tutorial{ background: rgba(124,58,237,0.2); color: #a78bfa; }
+    .post-tag.casestudy{background: rgba(6,182,212,0.2);  color: #22d3ee; }
+    .post-tag.strategy{ background: rgba(236,72,153,0.2); color: #f472b6; }
+    .post-tag.tool    { background: rgba(16,185,129,0.2); color: #34d399; }
+
+    .post-meta-info {
+      display: flex; align-items: center; gap: 16px;
+      color: var(--text3); font-size: 0.83rem;
+    }
+    .post-meta-info span { display: flex; align-items: center; gap: 5px; }
+
+    .post-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900; line-height: 1.2;
+      margin-bottom: 24px; color: var(--text);
+    }
+
+    .post-author {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 36px;
+    }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--grad);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .author-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+
+    /* Cover card */
+    .post-cover {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, #0f0c29, #1a1040, #24243e);
+      position: relative;
+      min-height: 300px;
+      display: flex; flex-direction: column;
+      padding: 28px 32px;
+    }
+    .post-cover::before {
+      content: '';
+      position: absolute; right: -40px; bottom: -40px;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: rgba(124,58,237,0.14);
+    }
+    .post-cover::after {
+      content: '';
+      position: absolute; right: 80px; bottom: 30px;
+      width: 140px; height: 140px; border-radius: 50%;
+      background: rgba(167,139,250,0.08);
+    }
+    .post-cover-brand {
+      font-size: 0.75rem; color: rgba(255,255,255,0.3);
+      margin-bottom: 16px; font-weight: 500;
+      position: relative; z-index: 1;
+    }
+    .post-cover-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 11px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 700;
+      margin-bottom: 20px; width: fit-content;
+      position: relative; z-index: 1;
+    }
+    .post-cover-title {
+      font-size: 1.4rem; font-weight: 800;
+      color: rgba(255,255,255,0.9); line-height: 1.3;
+      max-width: 70%;
+      position: relative; z-index: 1;
+    }
+    .post-cover-line {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+    .post-cover-url {
+      position: absolute; bottom: 14px; right: 20px;
+      font-size: 0.7rem; color: rgba(255,255,255,0.2);
+      font-weight: 500; z-index: 1;
+    }
+
+    /* Divider */
+    .post-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 36px 0;
+    }
+
+    /* Post content */
+    .post-content { color: var(--text2); font-size: 1rem; line-height: 1.85; }
+    .post-content p { margin-bottom: 20px; }
+    .post-content strong { color: var(--text); font-weight: 700; }
+    .post-content h2 {
+      font-size: 1.4rem; font-weight: 800;
+      color: var(--text); margin: 40px 0 16px;
+    }
+    .post-content h3 {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text); margin: 28px 0 12px;
+    }
+    .post-content ul { margin: 0 0 20px 20px; list-style: disc; }
+    .post-content ul li { margin-bottom: 8px; color: var(--text2); }
+    .post-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 16px 24px;
+      background: rgba(124,58,237,0.08);
+      border-radius: 0 12px 12px 0;
+      margin: 28px 0;
+      font-style: italic;
+      color: var(--text);
+    }
+    .post-content .highlight-box {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 12px; padding: 20px 24px;
+      margin: 28px 0;
+    }
+    .post-content .highlight-box strong { color: #fbbf24; }
+
+    /* Related posts */
+    .post-related { margin-top: 64px; }
+    .post-related h3 {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text2); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 28px;
+    }
+    .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .related-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px;
+      text-decoration: none; color: inherit;
+      transition: var(--transition); display: block;
+    }
+    .related-card:hover { border-color: rgba(124,58,237,0.35); transform: translateY(-4px); }
+    .related-card-tag {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--accent2); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 8px;
+      display: block;
+    }
+    .related-card-title {
+      font-size: 0.92rem; font-weight: 700;
+      line-height: 1.45; color: var(--text);
+    }
+
+    @media (max-width: 640px) {
+      .post-cover-title { max-width: 100%; font-size: 1.1rem; }
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">TBN<span class="dot">.</span></a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html#home" class="nav-link">Trang chủ</a></li>
+        <li><a href="index.html#about" class="nav-link">Về tôi</a></li>
+        <li><a href="index.html#expertise" class="nav-link">Chuyên môn</a></li>
+        <li><a href="index.html#experience" class="nav-link">Kinh nghiệm</a></li>
+        <li><a href="index.html#portfolio" class="nav-link">Portfolio</a></li>
+        <li><a href="blog.html" class="nav-link active">Kiến thức</a></li>
+        <li><a href="index.html#contact" class="nav-link">Liên hệ</a></li>
+      </ul>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="post-wrap">
+
+    <!-- BACK LINK -->
+    <a href="blog.html" class="post-back"><i class="fa-solid fa-chevron-left"></i> Quay lại Kiến Thức</a>
+
+    <!-- META -->
+    <div class="post-meta">
+      <span class="post-tag tips"><i class="fa-solid fa-lightbulb"></i> Tips</span>
+      <div class="post-meta-info">
+        <span><i class="fa-regular fa-calendar"></i> 24 Tháng 4, 2026</span>
+        <span>•</span>
+        <span><i class="fa-regular fa-clock"></i> 7 phút đọc</span>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <h1 class="post-title" id="post-title">Tối Ưu Meta Ads: Giảm CPA 40% Chỉ Trong 30 Ngày</h1>
+
+    <!-- AUTHOR -->
+    <div class="post-author">
+      <div class="author-avatar">N</div>
+      <span class="author-name">Trương Bảo Ngọc</span>
+    </div>
+
+    <!-- COVER CARD -->
+    <div class="post-cover">
+      <span class="post-cover-brand">TBN.</span>
+      <span class="post-cover-tag tips"><i class="fa-solid fa-lightbulb"></i> TIPS</span>
+      <span class="post-cover-title" id="cover-title">Tối Ưu Meta Ads: Giảm CPA 40% Chỉ Trong 30 Ngày</span>
+      <div class="post-cover-line"></div>
+      <span class="post-cover-url">truongbaongoc.com/kien-thuc</span>
+    </div>
+
+    <div class="post-divider"></div>
+
+    <!-- CONTENT -->
+    <div class="post-content" id="post-content">
+      <p>Hầu hết các team marketing đều tập trung quá nhiều vào việc tăng ngân sách mà quên đi <strong>vế còn lại của phương trình: tối ưu chi phí chuyển đổi</strong>. Một chiến dịch Meta Ads hiệu quả không chỉ là về ngân sách lớn — mà là về việc mỗi đồng chi ra đều tạo ra giá trị đo lường được.</p>
+
+      <p>Trong bài viết này, tôi sẽ chia sẻ đúng quy trình 30 ngày đã giúp tôi giảm CPA 40% cho một khách hàng ngành FMCG, từ cấu trúc chiến dịch, audience strategy đến creative rotation.</p>
+
+      <h2>Tuần 1: Audit toàn bộ cấu trúc chiến dịch</h2>
+      <p>Trước khi thay đổi bất cứ điều gì, tôi dành cả tuần đầu để <strong>hiểu dữ liệu hiện tại</strong>. Phần lớn tài khoản khi tôi tiếp nhận đều có vấn đề ở cấu độ campaign structure:</p>
+      <ul>
+        <li>Quá nhiều ad sets cạnh tranh nhau trong cùng một auction</li>
+        <li>Audience overlap cao dẫn đến tự cannibalize</li>
+        <li>Creative cũ không được refresh, dẫn đến audience fatigue</li>
+        <li>Chưa có phân tách rõ ràng giữa prospecting và retargeting</li>
+      </ul>
+
+      <blockquote>Một tài khoản Meta Ads lộn xộn giống như một cái chợ không có lối đi — ngân sách chạy lung tung và không ai biết cái gì đang thực sự hoạt động.</blockquote>
+
+      <h2>Tuần 2: Tái cấu trúc Audience Strategy</h2>
+      <p>Sau khi audit xong, tôi bắt đầu xây lại audience theo mô hình phễu 3 tầng:</p>
+      <ul>
+        <li><strong>TOF (Top of Funnel):</strong> Broad targeting + Lookalike 1-3% từ purchasers</li>
+        <li><strong>MOF (Middle of Funnel):</strong> Retarget video viewers 75%+ và website visitors 30 ngày</li>
+        <li><strong>BOF (Bottom of Funnel):</strong> Retarget add-to-cart, checkout initiated trong 7 ngày</li>
+      </ul>
+
+      <div class="highlight-box">
+        <strong>Kết quả tuần 2:</strong> CPA giảm 18% chỉ bằng cách phân tầng đúng audience và loại bỏ overlap. Điều này xảy ra mà không cần tăng thêm bất kỳ đồng nào.
+      </div>
+
+      <h2>Tuần 3: Creative Refresh & A/B Testing</h2>
+      <p>Creative là yếu tố quyết định 70% hiệu suất của chiến dịch Meta. Tôi chạy song song <strong>3 định dạng</strong> trong cùng một ad set để tìm winner:</p>
+      <ul>
+        <li>Video ngắn 15 giây — hook mạnh trong 3 giây đầu</li>
+        <li>Carousel — hiển thị nhiều sản phẩm / benefit</li>
+        <li>Static image — đơn giản, load nhanh, thường win ở mobile</li>
+      </ul>
+
+      <h2>Tuần 4: Bid Strategy & Budget Optimization</h2>
+      <p>Sau khi có winner creative và audience ổn định, bước cuối là tối ưu bid. Tôi chuyển từ Lowest Cost sang <strong>Cost Cap</strong> với mức cap bằng 1.5x CPA mục tiêu — đủ rộng để hệ thống học nhưng vẫn kiểm soát chi phí.</p>
+
+      <p>Kết quả cuối 30 ngày: CPA giảm <strong>40%</strong>, ROAS tăng <strong>2.3x</strong>, và chiến dịch ổn định đủ để scale ngân sách lên 3x mà không breakdown.</p>
+    </div>
+
+    <div class="post-divider"></div>
+
+    <!-- RELATED -->
+    <div class="post-related">
+      <h3>Bài viết liên quan</h3>
+      <div class="related-grid">
+        <a href="blog-post.html?id=2" class="related-card">
+          <span class="related-card-tag"><i class="fa-solid fa-lightbulb"></i> Tips</span>
+          <div class="related-card-title">Retargeting Thông Minh Trước Khi AI Tối Ưu Thay Bạn</div>
+        </a>
+        <a href="blog-post.html?id=4" class="related-card">
+          <span class="related-card-tag"><i class="fa-solid fa-chart-pie"></i> Case Study</span>
+          <div class="related-card-title">Case Study: Ngành FMCG Đạt ROAS 350% Với Google Ads</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-logo">TBN<span class="dot">.</span></p>
+      <p class="footer-copy">© 2026 Trương Bảo Ngọc. All rights reserved.</p>
+      <p class="footer-sub">Digital Marketing Expert — Performance · Branding · Trade</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 10));
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    navToggle.addEventListener('click', () => navMenu.classList.toggle('open'));
+    navMenu.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('open')));
+
+    // Load post content dynamically based on URL param
+    const posts = {
+      1: {
+        tag: 'tips', tagLabel: 'Tips', tagIcon: 'lightbulb',
+        date: '24 Tháng 4, 2026', readTime: '7 phút đọc',
+        title: 'Tối Ưu Meta Ads: Giảm CPA 40% Chỉ Trong 30 Ngày',
+        accentClass: 'thumb-accent-yellow',
+        coverLine: 'linear-gradient(90deg, #f59e0b, #fbbf24)'
+      },
+      2: {
+        tag: 'tips', tagLabel: 'Tips', tagIcon: 'lightbulb',
+        date: '24 Tháng 4, 2026', readTime: '5 phút đọc',
+        title: 'Retargeting Thông Minh Trước Khi AI Tối Ưu Thay Bạn',
+        coverLine: 'linear-gradient(90deg, #f59e0b, #fbbf24)'
+      },
+      3: {
+        tag: 'tutorial', tagLabel: 'Hướng dẫn', tagIcon: 'code',
+        date: '23 Tháng 4, 2026', readTime: '9 phút đọc',
+        title: 'Feature Flags Chiến Dịch: Triển Khai Không Phá Vỡ ROI',
+        coverLine: 'linear-gradient(90deg, #7c3aed, #a78bfa)'
+      },
+      4: {
+        tag: 'casestudy', tagLabel: 'Case Study', tagIcon: 'chart-pie',
+        date: '20 Tháng 4, 2026', readTime: '10 phút đọc',
+        title: 'Case Study: Ngành FMCG Đạt ROAS 350% Với Google Ads',
+        coverLine: 'linear-gradient(90deg, #06b6d4, #22d3ee)'
+      },
+      5: {
+        tag: 'strategy', tagLabel: 'Chiến lược', tagIcon: 'chess',
+        date: '18 Tháng 4, 2026', readTime: '8 phút đọc',
+        title: 'Xây Dựng Brand Identity Từ Con Số 0: Framework Thực Chiến',
+        coverLine: 'linear-gradient(90deg, #ec4899, #f472b6)'
+      },
+      6: {
+        tag: 'tool', tagLabel: 'Công cụ', tagIcon: 'wrench',
+        date: '15 Tháng 4, 2026', readTime: '6 phút đọc',
+        title: '5 Công Cụ AI Giúp Tôi Tiết Kiệm 10 Giờ/Tuần Trong Workflow',
+        coverLine: 'linear-gradient(90deg, #10b981, #34d399)'
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get('id')) || 1;
+    const post = posts[id];
+
+    if (post) {
+      document.title = post.title + ' | Trương Bảo Ngọc';
+      document.getElementById('post-title').textContent = post.title;
+      document.getElementById('cover-title').textContent = post.title;
+
+      const tagEl = document.querySelector('.post-meta .post-tag');
+      tagEl.className = 'post-tag ' + post.tag;
+      tagEl.innerHTML = `<i class="fa-solid fa-${post.tagIcon}"></i> ${post.tagLabel}`;
+
+      const coverTagEl = document.querySelector('.post-cover-tag');
+      coverTagEl.className = 'post-cover-tag ' + post.tag;
+      coverTagEl.innerHTML = `<i class="fa-solid fa-${post.tagIcon}"></i> ${post.tagLabel.toUpperCase()}`;
+
+      document.querySelector('.post-cover-line').style.background = post.coverLine;
+
+      const metaInfo = document.querySelector('.post-meta-info');
+      metaInfo.innerHTML = `<span><i class="fa-regular fa-calendar"></i> ${post.date}</span><span>•</span><span><i class="fa-regular fa-clock"></i> ${post.readTime}</span>`;
+    }
+  </script>
+</body>
+</html>

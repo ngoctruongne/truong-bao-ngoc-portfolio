@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Trương Bảo Ngọc - Technical Business Development &amp; Growth Marketing Executive. Tư vấn giải pháp B2B, tự động hóa quy trình n8n, AI Architecture &amp; Growth Marketing." />
+  <title>Trương Bảo Ngọc | Technical Business Development &amp; Growth Marketing Executive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="ngoc-portfolio">
+
+  <!-- NAVIGATION -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">TBN<span class="dot">.</span></a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html" class="nav-link" style="color: var(--core) !important; font-weight: 700;"><i class="fa-solid fa-atom"></i> Mô Hình Core</a></li>
+        <li><a href="#about" class="nav-link">Về tôi</a></li>
+        <li><a href="#expertise" class="nav-link">Chuyên môn</a></li>
+        <li><a href="#experience" class="nav-link">Kinh nghiệm</a></li>
+        <li><a href="#portfolio" class="nav-link active">Dự án Thực chiến</a></li>
+        <li><a href="blog.html" class="nav-link">Kiến thức</a></li>
+        <li><a href="#contact" class="nav-link">Liên hệ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Đổi chế độ Sáng / Tối" title="Chuyển chế độ Sáng / Tối">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+      <div class="hero-orb orb3"></div>
+      <div class="grid-overlay"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Sẵn sàng hợp tác</span>
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-title-top">Trương</span>
+          <span class="gradient-text hero-title-bottom">Bảo Ngọc</span>
+        </h1>
+        <p class="hero-role">Technical Business Development &amp; Growth Marketing Executive</p>
+        <p class="hero-desc">Định vị cầu nối giữa <strong>giải pháp kinh doanh B2B</strong>, <strong>kiến trúc tự động hóa (n8n &amp; Claude AI)</strong> và <strong>Growth Marketing phễu dữ liệu</strong> — tối ưu hóa hệ thống tiếp thị và chuyển hóa cơ hội thành hợp đồng thương mại.</p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num" data-target="3">0</span><span class="stat-plus"></span>
+            <span class="stat-label">Trọng tâm kỹ năng cốt lõi</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num" data-target="100">0</span><span class="stat-plus">%</span>
+            <span class="stat-label">Quy trình tự động hóa luồng</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num" data-target="360">0</span><span class="stat-plus">°</span>
+            <span class="stat-label">Giải pháp B2B &amp; Inbound</span>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <a href="#portfolio" class="btn btn-primary">Xem Portfolio <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="#contact" class="btn btn-ghost">Liên hệ ngay</a>
+        </div>
+      </div>
+      <div class="hero-image-wrap">
+        <div class="hero-image-ring ring1"></div>
+        <div class="hero-image-ring ring2"></div>
+        <div class="hero-image-card">
+          <img src="assets/images/profile.jpg" alt="ảnh đại diện Ngọc Trương" class="hero-img" id="hero-img" onerror="this.src='https://ngoctb.io.vn/wp-content/uploads/2026/04/product_image_4.png'" />
+          <div class="hero-img-placeholder" id="hero-placeholder">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        </div>
+        <div class="floating-tag tag1"><i class="fa-solid fa-handshake-angle"></i> B2B Solutions</div>
+        <div class="floating-tag tag2"><i class="fa-solid fa-robot"></i> n8n &amp; Claude AI</div>
+        <div class="floating-tag tag3"><i class="fa-solid fa-magnifying-glass-chart"></i> Inbound &amp; Ads</div>
+      </div>
+    </div>
+    <a href="#about" class="scroll-down-btn" aria-label="Scroll down">
+      <i class="fa-solid fa-chevron-down"></i>
+    </a>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="about section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Về tôi</span>
+        <h2 class="section-title">Chuyên gia giải pháp kỹ thuật số,<br/><span class="gradient-text">tự động hóa &amp; tăng trưởng</span></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Tôi là <strong>Trương Bảo Ngọc</strong> — <strong>Technical Business Development &amp; Growth Marketing Executive</strong>. Định vị của tôi là cầu nối giữa chiến lược phát triển kinh doanh B2B và kiến trúc giải pháp công nghệ tiếp thị hiện đại.</p>
+          <p>Trọng tâm chuyên môn tập trung vào ba trụ cột: <strong>Khảo sát và tư vấn giải pháp B2B</strong>, thiết kế <strong>luồng xử lý dữ liệu tự động (n8n &amp; Claude AI)</strong>, cùng chiến lược <strong>Commercial SEO đa tầng và kích hoạt dữ liệu máy học Google Ads</strong> nhằm tối ưu hóa chi phí và tỷ lệ chuyển đổi thương mại.</p>
+          <div class="about-highlights">
+            <div class="highlight-item">
+              <i class="fa-solid fa-handshake-angle"></i>
+              <div>
+                <strong>Business Development &amp; Solutions</strong>
+                <span>Discovery nhu cầu kỹ thuật B2B, xây dựng Proposal giải pháp và đàm phán hợp đồng</span>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <i class="fa-solid fa-diagram-project"></i>
+              <div>
+                <strong>Automation &amp; AI Architecture</strong>
+                <span>Thiết kế luồng n8n End-to-End, tích hợp Claude AI chuẩn hóa dữ liệu &amp; đồng bộ CRM</span>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+              <div>
+                <strong>Inbound &amp; Growth Marketing</strong>
+                <span>Commercial SEO, Topic Clusters E-E-A-T, Technical Audit CRO &amp; Google Ads</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-skills">
+          <h3 class="skills-title">Kỹ năng chuyên môn</h3>
+          <div class="skill-bars">
+            <div class="skill-bar-item">
+              <div class="skill-bar-header"><span>B2B Discovery &amp; Solution Pitching</span><span>92%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill" data-width="92"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-header"><span>Automation Workflow Engine (n8n)</span><span>90%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill" data-width="90"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-header"><span>AI Integration &amp; Intelligence (Claude AI)</span><span>88%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill" data-width="88"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-header"><span>Commercial SEO &amp; Topic Clusters (E-E-A-T)</span><span>91%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill" data-width="91"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-header"><span>Technical SEO Audit &amp; On-page CRO</span><span>87%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill" data-width="87"></div></div>
+            </div>
+            <div class="skill-bar-item">
+              <div class="skill-bar-header"><span>Customer Match Data &amp; Google Ads</span><span>89%</span></div>
+              <div class="skill-bar-track"><div class="skill-bar-fill" data-width="89"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERTISE SECTION -->
+  <section class="expertise section" id="expertise">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Chuyên môn</span>
+        <h2 class="section-title">Năng lực cốt lõi &amp; <span class="gradient-text">Quy trình giải pháp</span></h2>
+      </div>
+      <div class="expertise-grid">
+        <div class="expertise-card">
+          <div class="card-icon"><i class="fa-solid fa-handshake-angle"></i></div>
+          <h3>Business Development &amp; Solutions</h3>
+          <p>Khảo sát và phân tích nhu cầu kỹ thuật/vận hành B2B (Discovery &amp; Needs Assessment). Xây dựng proposal kỹ thuật số và chuyển hóa cơ hội thành hợp đồng hợp tác.</p>
+          <ul class="card-tags">
+            <li>B2B Discovery</li><li>Needs Assessment</li><li>Solution Pitching</li><li>Negotiation</li>
+          </ul>
+        </div>
+        <div class="expertise-card featured">
+          <div class="card-icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <h3>Automation &amp; n8n Architecture</h3>
+          <p>Thiết kế luồng xử lý dữ liệu tự động (End-to-End Workflow) qua n8n. Cấu trúc và đồng bộ dữ liệu tự động từ Dataset sang nền tảng phân phối quảng cáo và CRM.</p>
+          <ul class="card-tags">
+            <li>n8n Core</li><li>End-to-End Workflow</li><li>REST API &amp; Webhook</li><li>CRM Sync</li>
+          </ul>
+        </div>
+        <div class="expertise-card">
+          <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
+          <h3>AI Architecture &amp; Claude Integration</h3>
+          <p>Tích hợp mô hình ngôn ngữ lớn (Claude AI) vào tự động hóa phân tích dữ liệu, tạo lập nội dung thông minh và chuẩn hóa hệ thống thông tin tiếp thị.</p>
+          <ul class="card-tags">
+            <li>Claude AI API</li><li>Prompt Pipeline</li><li>Content Automation</li><li>Data Normalization</li>
+          </ul>
+        </div>
+        <div class="expertise-card">
+          <div class="card-icon"><i class="fa-solid fa-layer-group"></i></div>
+          <h3>Commercial SEO &amp; Topic Clusters</h3>
+          <p>Hoạch định chiến lược Commercial SEO, xây dựng cấu trúc nội dung đa tầng (Topic Clusters &amp; E-E-A-T) phục vụ thu hút Lead chất lượng cao cho B2B &amp; B2C.</p>
+          <ul class="card-tags">
+            <li>Commercial SEO</li><li>Topic Clusters</li><li>E-E-A-T Model</li><li>Inbound Funnel</li>
+          </ul>
+        </div>
+        <div class="expertise-card">
+          <div class="card-icon"><i class="fa-solid fa-wrench"></i></div>
+          <h3>Technical SEO Audit &amp; On-page CRO</h3>
+          <p>Phân tích kỹ thuật (Technical SEO Audit) và tối ưu trải nghiệm chuyển đổi trang đích (On-page/CRO), giúp tối đa hóa khả năng giữ chân và chuyển đổi khách hàng.</p>
+          <ul class="card-tags">
+            <li>Technical Audit</li><li>On-page CRO</li><li>UX/UI Funnel</li><li>Site Architecture</li>
+          </ul>
+        </div>
+        <div class="expertise-card">
+          <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>Data-Driven Ads &amp; Google Ads ML</h3>
+          <p>Ứng dụng tệp dữ liệu khách hàng (Customer Match/Audience Lists) để kích hoạt tín hiệu máy học và tối ưu chiến dịch Performance Marketing trên Google Ads.</p>
+          <ul class="card-tags">
+            <li>Google Ads</li><li>Customer Match</li><li>Audience Signals</li><li>Smart Bidding ML</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE SECTION -->
+  <section class="experience section" id="experience">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Kinh nghiệm</span>
+        <h2 class="section-title">Hành trình <span class="gradient-text">chuyên môn</span></h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <span class="timeline-date">04/2024 — Hiện tại</span>
+            <h3>Technical Business Development &amp; Growth Marketing Lead</h3>
+            <p class="timeline-company"><i class="fa-solid fa-building"></i> MECI Factory (B2B Industrial Solutions)</p>
+            <p>Đồng hành cùng khối kinh doanh (B2B Sales) xây dựng chiến lược Inbound &amp; Outbound Growth toàn phễu; thiết kế công cụ số hóa và quét danh thiếp tự động để bắt trọn lead doanh nghiệp tại triển lãm công nghiệp (O2O Tooling). Xây dựng luồng tự động hóa nuôi dưỡng lead B2B qua n8n kết hợp Supabase/Dataset và Claude AI; tối ưu tín hiệu tệp khách hàng doanh nghiệp nhằm nâng cao hiệu quả quảng cáo và đàm phán giải pháp công nghiệp.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <span class="timeline-date">06/2020 — 03/2024</span>
+            <h3>Commercial Growth &amp; Digital Solutions Specialist</h3>
+            <p class="timeline-company"><i class="fa-solid fa-building"></i> MTH Jewelry (Mộc Trầm Hương)</p>
+            <p>Chủ trì chiến lược tiếp thị đa kênh và phát triển thương mại số; quản trị và điều phối đội ngũ liên chức năng (Content, Media, Sales) để đồng bộ phễu chuyển đổi từ tiếp cận đến chốt đơn. Hoạch định cấu trúc SEO chuyên sâu (Topic Clusters, E-E-A-T) cho sản phẩm giá trị cao, kết hợp vận hành quảng cáo hiệu suất (Google Ads, Meta, TikTok) và phân tích dữ liệu đa nguồn để tối ưu chi phí chuyển đổi thương mại.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <span class="timeline-date">09/2018 — 05/2020</span>
+            <h3>Inbound Marketing &amp; Technical SEO Specialist</h3>
+            <p class="timeline-company"><i class="fa-solid fa-building"></i> 2momart.vn | Đồng Hồ Hải Triều | Mobigo</p>
+            <p>Phụ trách Technical SEO On-page/Off-page, kiểm thử kỹ thuật website và tối ưu hóa trải nghiệm chuyển đổi (CRO) trên các nền tảng thương mại điện tử và bán lẻ quy mô lớn. Ứng dụng các công cụ dữ liệu (GA4, GSC, Ahrefs, SEMrush) để phân tích hành vi tìm kiếm, nghiên cứu ý định mua hàng (Search Intent) và thiết lập nền tảng phễu dữ liệu người dùng ban đầu.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO / RESULTS SECTION -->
+  <section class="portfolio section" id="portfolio">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Dự án &amp; Giải pháp</span>
+        <h2 class="section-title">Hồ sơ giải pháp <span class="gradient-text">kỹ thuật số</span></h2>
+        <p class="section-desc">Tổng hợp phạm vi trách nhiệm, quy trình giải pháp kỹ thuật và năng lực triển khai thực tế.</p>
+      </div>
+      <div class="portfolio-filters">
+        <button class="filter-btn active" data-filter="all">Tất cả giải pháp</button>
+        <button class="filter-btn" data-filter="performance">Business Solutions</button>
+        <button class="filter-btn" data-filter="branding">Automation &amp; n8n</button>
+        <button class="filter-btn" data-filter="trade">Inbound &amp; SEO</button>
+        <button class="filter-btn" data-filter="social">AI Systems</button>
+      </div>
+      <div class="portfolio-grid" id="portfolio-grid">
+        <div class="portfolio-card" data-category="performance">
+          <div class="portfolio-img-wrap">
+            <div class="portfolio-img-placeholder">
+              <i class="fa-solid fa-image"></i>
+              <span>Cập nhật sơ đồ giải pháp</span>
+            </div>
+            <div class="portfolio-overlay">
+              <button class="overlay-zoom" onclick="openLightbox(0)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <span class="portfolio-cat">Business Development &amp; Solutions</span>
+            <h3>B2B Discovery &amp; Technical Solution Pitching</h3>
+            <div class="portfolio-metrics">
+              <span><i class="fa-solid fa-clipboard-check"></i> Khảo sát nhu cầu vận hành B2B</span>
+              <span><i class="fa-solid fa-handshake"></i> Đề xuất mô hình hợp tác thương mại</span>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-card" data-category="branding">
+          <div class="portfolio-img-wrap">
+            <div class="portfolio-img-placeholder">
+              <i class="fa-solid fa-image"></i>
+              <span>Cập nhật sơ đồ luồng n8n</span>
+            </div>
+            <div class="portfolio-overlay">
+              <button class="overlay-zoom" onclick="openLightbox(1)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <span class="portfolio-cat">Automation Architecture</span>
+            <h3>End-to-End Workflow Engine (n8n Core)</h3>
+            <div class="portfolio-metrics">
+              <span><i class="fa-solid fa-diagram-project"></i> Thiết kế luồng xử lý tự động n8n</span>
+              <span><i class="fa-solid fa-database"></i> Đồng bộ Dataset sang CRM &amp; Ads</span>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-card" data-category="social">
+          <div class="portfolio-img-wrap">
+            <div class="portfolio-img-placeholder">
+              <i class="fa-solid fa-image"></i>
+              <span>Cập nhật kiến trúc AI Pipeline</span>
+            </div>
+            <div class="portfolio-overlay">
+              <button class="overlay-zoom" onclick="openLightbox(2)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <span class="portfolio-cat">AI Systems Integration</span>
+            <h3>Claude AI Intelligence &amp; Content Pipeline</h3>
+            <div class="portfolio-metrics">
+              <span><i class="fa-solid fa-brain"></i> Tích hợp LLM Claude AI tự động hóa</span>
+              <span><i class="fa-solid fa-filter"></i> Phân tích dữ liệu &amp; chuẩn hóa thông tin</span>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-card" data-category="trade">
+          <div class="portfolio-img-wrap">
+            <div class="portfolio-img-placeholder">
+              <i class="fa-solid fa-image"></i>
+              <span>Cập nhật cấu trúc Topic Clusters</span>
+            </div>
+            <div class="portfolio-overlay">
+              <button class="overlay-zoom" onclick="openLightbox(3)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <span class="portfolio-cat">Inbound &amp; Commercial SEO</span>
+            <h3>Commercial SEO &amp; Topic Clusters (E-E-A-T)</h3>
+            <div class="portfolio-metrics">
+              <span><i class="fa-solid fa-layer-group"></i> Cấu trúc Topic Clusters đa tầng</span>
+              <span><i class="fa-solid fa-bullseye"></i> Thu hút Lead B2B &amp; B2C chất lượng</span>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-card" data-category="trade">
+          <div class="portfolio-img-wrap">
+            <div class="portfolio-img-placeholder">
+              <i class="fa-solid fa-image"></i>
+              <span>Cập nhật báo cáo Technical Audit</span>
+            </div>
+            <div class="portfolio-overlay">
+              <button class="overlay-zoom" onclick="openLightbox(4)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <span class="portfolio-cat">Technical SEO &amp; CRO</span>
+            <h3>Technical SEO Audit &amp; On-page CRO Optimization</h3>
+            <div class="portfolio-metrics">
+              <span><i class="fa-solid fa-wrench"></i> Technical Audit cấu trúc website</span>
+              <span><i class="fa-solid fa-arrow-pointer"></i> Tối ưu trải nghiệm chuyển đổi On-page</span>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-card" data-category="performance">
+          <div class="portfolio-img-wrap">
+            <div class="portfolio-img-placeholder">
+              <i class="fa-solid fa-image"></i>
+              <span>Cập nhật cấu trúc tệp dữ liệu</span>
+            </div>
+            <div class="portfolio-overlay">
+              <button class="overlay-zoom" onclick="openLightbox(5)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <span class="portfolio-cat">Performance &amp; Data Growth</span>
+            <h3>Customer Match Data &amp; Google Ads Machine Learning</h3>
+            <div class="portfolio-metrics">
+              <span><i class="fa-solid fa-users-viewfinder"></i> Tệp dữ liệu khách hàng (Audience Lists)</span>
+              <span><i class="fa-solid fa-microchip"></i> Kích hoạt tín hiệu máy học Google Ads</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="add-image-notice">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Để cập nhật hình ảnh sơ đồ thực tế: đặt file ảnh vào thư mục <code>assets/images/</code> và cập nhật thẻ <code>&lt;img src="..."&gt;</code> trong từng card</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close"><i class="fa-solid fa-xmark"></i></button>
+    <button class="lightbox-prev" id="lightbox-prev"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="lightbox-next" id="lightbox-next"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="lightbox-content" id="lightbox-content"></div>
+  </div>
+
+  <!-- KNOWLEDGE / BLOG SECTION -->
+  <section class="blog section" id="blog">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Chia sẻ &amp; Insight</span>
+        <h2 class="section-title">Góc nhìn &amp; <span class="gradient-text">Kiến thức thực chiến</span></h2>
+        <p class="section-desc">Tổng hợp các phân tích, phương pháp giải pháp kỹ thuật số, tự động hóa quy trình và tối ưu hóa tăng trưởng.</p>
+      </div>
+
+      <!-- Blog Filters -->
+      <div class="blog-filters">
+        <button class="bfilter-btn active" data-bfilter="all">Tất cả bài viết</button>
+        <button class="bfilter-btn" data-bfilter="performance">B2B Solutions</button>
+        <button class="bfilter-btn" data-bfilter="branding">Automation &amp; n8n</button>
+        <button class="bfilter-btn" data-bfilter="trade">Commercial SEO</button>
+        <button class="bfilter-btn" data-bfilter="data">AI Architecture</button>
+      </div>
+
+      <!-- Blog Cards Grid -->
+      <div class="blog-grid">
+        <!-- Bài 1: Bài viết mẫu chi tiết -->
+        <article class="blog-card featured-blog" data-category="performance trade">
+          <div class="blog-card-thumb">
+            <span class="blog-badge badge-orange"><i class="fa-solid fa-fire"></i> Bài viết nổi bật</span>
+            <div class="blog-thumb-bg grad-orange">
+              <i class="fa-solid fa-arrows-split-up-and-left"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Performance &amp; Trade</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-date">22/09/2026</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Chiến lược kết hợp Performance Marketing và Trade Marketing: Tối ưu ROI từ Online đến Điểm bán (In-store)</a>
+            </h3>
+            <p class="blog-excerpt">
+              Khám phá mô hình O2O (Online-to-Offline) thực chiến giúp đồng bộ thông điệp quảng cáo số với trải nghiệm mua hàng tại đại lý, siêu thị để bứt phá doanh số sell-out.
+            </p>
+            <div class="blog-card-footer">
+              <div class="blog-author">
+                <img src="https://ngoctb.io.vn/wp-content/uploads/2026/04/product_image_4.png" alt="Trương Bảo Ngọc" class="author-avatar" onerror="this.src='assets/images/profile.jpg'" />
+                <span>Trương Bảo Ngọc</span>
+              </div>
+              <a href="blog-detail.html" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Bài 2 -->
+        <article class="blog-card" data-category="performance">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-purple">
+              <i class="fa-brands fa-meta"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Performance Ads</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 5 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Cấu trúc chiến dịch Meta Ads 2026: Khi nào dùng CBO và khi nào nên tách nhóm ABO?</a>
+            </h3>
+            <p class="blog-excerpt">
+              Phân tích cơ chế máy học mới nhất của Meta để phân bổ ngân sách tối ưu, tránh chồng chéo tệp đối tượng và kiểm soát CPA hiệu quả.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Meta Ads</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Bài 3 -->
+        <article class="blog-card" data-category="branding">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-pink">
+              <i class="fa-solid fa-palette"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Brand Strategy</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 7 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Xây dựng Brand Identity nhất quán: Cầu nối giữa cảm xúc người dùng và quyết định mua</a>
+            </h3>
+            <p class="blog-excerpt">
+              Branding không chỉ là một chiếc logo đẹp, mà là hệ thống nhận diện và tiếng nói thương hiệu tạo dựng niềm tin vững chắc cho khách hàng.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Branding</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Bài 4 -->
+        <article class="blog-card" data-category="trade">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-green">
+              <i class="fa-solid fa-shop"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Trade Marketing</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Nghệ thuật tổ chức gian hàng triển lãm thương mại: Thu hút 500+ Qualified Leads</a>
+            </h3>
+            <p class="blog-excerpt">
+              Kinh nghiệm bài trí quầy trưng bày, huấn luyện PG/PB tại chỗ và xây dựng luồng trải nghiệm khách hàng giúp gian hàng luôn tấp nập khách ghé thăm.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Exhibition</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Nút xem tất cả bài viết trên trang riêng -->
+      <div style="text-align: center; margin-top: 48px;">
+        <a href="blog.html" class="btn btn-primary" style="padding: 16px 36px; font-size: 1rem;">
+          <i class="fa-solid fa-layer-group"></i> Xem toàn bộ bài viết trên Thư viện Kiến thức <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="contact section" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Liên hệ</span>
+        <h2 class="section-title">Hãy <span class="gradient-text">cùng làm việc</span></h2>
+        <p class="section-desc">Bạn đang tìm kiếm giải pháp phát triển kinh doanh B2B, tự động hóa quy trình hay tăng trưởng phễu khách hàng? Hãy kết nối ngay!</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div>
+              <strong>Email</strong>
+              <a href="mailto:ngoc@email.com">ngoc@email.com</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-brands fa-facebook"></i></div>
+            <div>
+              <strong>Facebook</strong>
+              <a href="#" target="_blank">facebook.com/truongbaongoc</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-brands fa-linkedin"></i></div>
+            <div>
+              <strong>LinkedIn</strong>
+              <a href="#" target="_blank">linkedin.com/in/truongbaongoc</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <strong>Điện thoại</strong>
+              <a href="tel:+84000000000">+84 000 000 000</a>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form" id="contact-form">
+          <div class="form-group">
+            <input type="text" id="form-name" placeholder="Họ và tên" required />
+          </div>
+          <div class="form-group">
+            <input type="email" id="form-email" placeholder="Email của bạn" required />
+          </div>
+          <div class="form-group">
+            <input type="text" id="form-subject" placeholder="Chủ đề" />
+          </div>
+          <div class="form-group">
+            <textarea id="form-message" rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Gửi tin nhắn <i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-logo">TBN<span class="dot">.</span></p>
+      <p class="footer-copy">© 2025 Trương Bảo Ngọc. All rights reserved.</p>
+      <p class="footer-sub">Digital Marketing Expert — Performance · Branding · Trade</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</div><!-- end #ngoc-portfolio -->
+</body>
+</html>

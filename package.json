@@ -1,0 +1,19 @@
+{
+  "name": "truong-bao-ngoc-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio & Knowledge Hub - Trương Bảo Ngọc | Digital Marketing Expert",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "push": "cmd /c sync-github.bat"
+  },
+  "keywords": [
+    "portfolio",
+    "digital-marketing",
+    "performance-marketing",
+    "branding",
+    "trade-marketing"
+  ],
+  "author": "Trương Bảo Ngọc",
+  "license": "ISC"
+}

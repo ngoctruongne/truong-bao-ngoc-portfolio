@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Thư viện kiến thức Technical Business Development, Automation n8n, Claude AI Architecture, Commercial SEO và Growth Marketing từ Trương Bảo Ngọc." />
+  <title>Kiến thức Giải pháp Kỹ thuật số &amp; Tăng trưởng | Trương Bảo Ngọc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="ngoc-portfolio">
+
+  <!-- NAVIGATION -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">TBN<span class="dot">.</span></a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html" class="nav-link" style="color: var(--core) !important; font-weight: 700;"><i class="fa-solid fa-atom"></i> Mô Hình Core</a></li>
+        <li><a href="portfolio.html#about" class="nav-link">Về tôi</a></li>
+        <li><a href="portfolio.html#expertise" class="nav-link">Chuyên môn</a></li>
+        <li><a href="portfolio.html#experience" class="nav-link">Kinh nghiệm</a></li>
+        <li><a href="portfolio.html#portfolio" class="nav-link">Portfolio</a></li>
+        <li><a href="blog.html" class="nav-link active">Kiến thức</a></li>
+        <li><a href="portfolio.html#contact" class="nav-link">Liên hệ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Đổi chế độ Sáng / Tối" title="Chuyển chế độ Sáng / Tối">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BLOG PAGE HERO HEADER -->
+  <header class="blog-page-hero">
+    <div class="container">
+      <div class="blog-breadcrumb">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Trang chủ</a>
+        <i class="fa-solid fa-chevron-right bread-sep"></i>
+        <span>Thư viện Kiến thức</span>
+      </div>
+
+      <div class="blog-hero-center">
+        <span class="section-tag"><i class="fa-solid fa-book-bookmark"></i> THƯ VIỆN KIẾN THỨC KỸ THUẬT &amp; TĂNG TRƯỞNG</span>
+        <h1 class="blog-page-title">
+          Góc nhìn &amp; <span class="gradient-text">Kiến thức thực chiến</span>
+        </h1>
+        <p class="blog-page-desc">
+          Tổng hợp các bài phân tích chuyên sâu về giải pháp B2B, tự động hóa quy trình n8n &amp; Claude AI, chiến lược Commercial SEO và tối ưu tiếp thị dựa trên dữ liệu.
+        </p>
+
+        <!-- THANH TÌM KIẾM BÀI VIẾT (LIVE SEARCH) -->
+        <div class="blog-search-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="blog-search-input" placeholder="Tìm kiếm bài viết theo từ khóa (Meta Ads, O2O, Trade, ROAS, Branding...)..." />
+          <button id="search-clear-btn" class="search-clear-btn" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- THỐNG KÊ NHANH -->
+        <div class="blog-stats-bar">
+          <div class="bstat-item">
+            <strong id="total-articles-count">6</strong>
+            <span>Bài viết chuyên sâu</span>
+          </div>
+          <div class="bstat-divider"></div>
+          <div class="bstat-item">
+            <strong>4</strong>
+            <span>Chuyên mục chính</span>
+          </div>
+          <div class="bstat-divider"></div>
+          <div class="bstat-item">
+            <strong>6+ Năm</strong>
+            <span>Đúc kết thực chiến</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- DANH SÁCH BÀI VIẾT TỔNG HỢP -->
+  <main class="blog-page-main">
+    <div class="container">
+
+      <!-- BỘ LỌC CHUYÊN MỤC -->
+      <div class="blog-filters">
+        <button class="bfilter-btn active" data-bfilter="all">Tất cả bài viết</button>
+        <button class="bfilter-btn" data-bfilter="performance"><i class="fa-solid fa-chart-line"></i> Performance Ads</button>
+        <button class="bfilter-btn" data-bfilter="branding"><i class="fa-solid fa-palette"></i> Brand Strategy</button>
+        <button class="bfilter-btn" data-bfilter="trade"><i class="fa-solid fa-store"></i> Trade Marketing</button>
+        <button class="bfilter-btn" data-bfilter="data"><i class="fa-solid fa-chart-pie"></i> Data &amp; Analytics</button>
+      </div>
+
+      <!-- GRID TẤT CẢ BÀI VIẾT -->
+      <div class="blog-grid" id="all-blog-grid">
+
+        <!-- BÀI 1: FEATURED BÀI VIẾT NỔI BẬT -->
+        <article class="blog-card featured-blog" data-category="performance trade" data-tags="performance trade o2o roas fmcg cpa">
+          <div class="blog-card-thumb">
+            <span class="blog-badge badge-orange"><i class="fa-solid fa-fire"></i> Bài viết nổi bật</span>
+            <div class="blog-thumb-bg grad-orange">
+              <i class="fa-solid fa-arrows-split-up-and-left"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Performance &amp; Trade</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-date">22/09/2026</span>
+            </div>
+            <h2 class="blog-title">
+              <a href="blog-detail.html">Chiến lược kết hợp Performance Marketing và Trade Marketing: Tối ưu ROI từ Online đến Điểm bán (In-store)</a>
+            </h2>
+            <p class="blog-excerpt">
+              Khám phá mô hình O2O (Online-to-Offline) thực chiến giúp đồng bộ thông điệp quảng cáo số với trải nghiệm mua hàng tại đại lý, siêu thị để bứt phá doanh số sell-out.
+            </p>
+            <div class="blog-card-footer">
+              <div class="blog-author">
+                <img src="assets/images/profile.jpg" alt="Trương Bảo Ngọc" class="author-avatar" onerror="this.src='https://ngoctb.io.vn/wp-content/uploads/2026/04/product_image_4.png'" />
+                <span>Trương Bảo Ngọc</span>
+              </div>
+              <a href="blog-detail.html" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- BÀI 2 -->
+        <article class="blog-card" data-category="performance" data-tags="meta ads facebook ads cbo abo roas cpa">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-purple">
+              <i class="fa-brands fa-meta"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Performance Ads</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 5 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Cấu trúc chiến dịch Meta Ads 2026: Khi nào dùng CBO và khi nào nên tách nhóm ABO?</a>
+            </h3>
+            <p class="blog-excerpt">
+              Phân tích cơ chế máy học mới nhất của Meta để phân bổ ngân sách tối ưu, tránh chồng chéo tệp đối tượng và kiểm soát CPA hiệu quả.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Meta Ads</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- BÀI 3 -->
+        <article class="blog-card" data-category="branding" data-tags="branding brand identity visual positioning">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-pink">
+              <i class="fa-solid fa-palette"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Brand Strategy</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 7 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Xây dựng Brand Identity nhất quán: Cầu nối giữa cảm xúc người dùng và quyết định mua</a>
+            </h3>
+            <p class="blog-excerpt">
+              Branding không chỉ là một chiếc logo đẹp, mà là hệ thống nhận diện và tiếng nói thương hiệu tạo dựng niềm tin vững chắc cho khách hàng.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Branding</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- BÀI 4 -->
+        <article class="blog-card" data-category="trade" data-tags="trade marketing posm trien lam event retail">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-green">
+              <i class="fa-solid fa-shop"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Trade Marketing</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Nghệ thuật tổ chức gian hàng triển lãm thương mại: Thu hút 500+ Qualified Leads</a>
+            </h3>
+            <p class="blog-excerpt">
+              Kinh nghiệm bài trí quầy trưng bày, huấn luyện PG/PB tại chỗ và xây dựng luồng trải nghiệm khách hàng giúp gian hàng luôn tấp nập khách ghé thăm.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Exhibition</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- BÀI 5 -->
+        <article class="blog-card" data-category="performance data" data-tags="google ads search shopping ecommerce conversion rate">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-purple">
+              <i class="fa-brands fa-google"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Performance &amp; Data</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 8 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Tối ưu hóa phễu Google Ads Search &amp; Performance Max: Bí quyết x3.2 lần tỷ lệ chuyển đổi E-commerce</a>
+            </h3>
+            <p class="blog-excerpt">
+              Cách kết hợp từ khóa phủ định chính xác, tối ưu Feed sản phẩm Shopping và cấu trúc tín hiệu đối tượng (Audience Signals) để đánh trúng khách hàng sẵn sàng rút ví.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Google Ads</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- BÀI 6 -->
+        <article class="blog-card" data-category="data" data-tags="data ga4 looker studio analytics pixel metrics">
+          <div class="blog-card-thumb">
+            <div class="blog-thumb-bg grad-orange">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">Data &amp; Analytics</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+            </div>
+            <h3 class="blog-title">
+              <a href="blog-detail.html">Cách đọc hiểu báo cáo GA4 &amp; Looker Studio: 5 chỉ số tài chính quyết định sự thành bại của chiến dịch</a>
+            </h3>
+            <p class="blog-excerpt">
+              Đừng để bị lóa mắt bởi vanity metrics. Hướng dẫn thiết lập bảng điều khiển trực quan giúp doanh nghiệp nhìn rõ tỷ suất hoàn vốn và dòng tiền thực tế.
+            </p>
+            <div class="blog-card-footer">
+              <span class="blog-tag">Analytics</span>
+              <a href="blog-detail.html" class="blog-read-more">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- THÔNG BÁO KHI KHÔNG TÌM THẤY KẾT QUẢ -->
+      <div id="no-search-results" class="no-results-box" style="display: none;">
+        <i class="fa-solid fa-magnifying-glass-arrow-right"></i>
+        <h3>Không tìm thấy bài viết phù hợp</h3>
+        <p>Vui lòng thử tìm kiếm bằng từ khóa khác hoặc bấm nút bên dưới để xem lại tất cả bài viết.</p>
+        <button id="reset-filter-btn" class="btn btn-ghost btn-sm">Xem tất cả bài viết</button>
+      </div>
+
+      <!-- HỘP ĐĂNG KÝ NHẬN BÀI VIẾT MỚI -->
+      <div class="newsletter-card">
+        <div class="newsletter-left">
+          <span class="newsletter-tag"><i class="fa-solid fa-envelope-open-text"></i> BẢN TIN CHUYÊN MÔN</span>
+          <h3>Nhận phân tích chiến dịch &amp; Case study mới nhất</h3>
+          <p>Mỗi tuần một bài viết đúc kết từ chiến dịch thực tế gửi trực tiếp đến hộp thư của bạn. Không spam.</p>
+        </div>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Cảm ơn bạn đã đăng ký!'); this.reset();">
+          <input type="email" placeholder="Nhập địa chỉ email của bạn..." required />
+          <button type="submit" class="btn btn-primary">Đăng ký ngay <i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-logo">TBN<span class="dot">.</span></p>
+      <p class="footer-copy">© 2026 Trương Bảo Ngọc. All rights reserved.</p>
+      <p class="footer-sub">Digital Marketing Expert — Performance · Branding · Trade Marketing</p>
+    </div>
+  </footer>
+
+</div><!-- end #ngoc-portfolio -->
+
+<!-- SCRIPT CHO TRANG BLOG: LIVE SEARCH VÀ FILTER -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('blog-search-input');
+  const clearBtn = document.getElementById('search-clear-btn');
+  const filterBtns = document.querySelectorAll('.bfilter-btn');
+  const blogCards = document.querySelectorAll('.blog-card');
+  const noResults = document.getElementById('no-search-results');
+  const resetBtn = document.getElementById('reset-filter-btn');
+  const totalCount = document.getElementById('total-articles-count');
+  const blogGrid = document.getElementById('all-blog-grid');
+
+  let currentFilter = 'all';
+
+  function getCategoryKey(cat) {
+    if (!cat) return 'performance';
+    const c = cat.toLowerCase();
+    if (c.includes('performance') || c.includes('ads')) return 'performance';
+    if (c.includes('brand') || c.includes('visual')) return 'branding';
+    if (c.includes('trade') || c.includes('retail') || c.includes('o2o')) return 'trade';
+    if (c.includes('data') || c.includes('analytics')) return 'data';
+    if (c.includes('e-com') || c.includes('commerce') || c.includes('growth')) return 'ecommerce';
+    return 'performance';
+  }
+
+  // Nạp dữ liệu bài viết động từ SQLite Database API
+  async function loadBlogFromApi() {
+    try {
+      const res = await fetch('/api/posts');
+      const data = await res.json();
+      if (data.success && data.posts && data.posts.length > 0) {
+        renderBlogCards(data.posts);
+      }
+    } catch (err) {
+      console.warn('Dùng dữ liệu tĩnh dự phòng:', err);
+    }
+  }
+
+  function renderBlogCards(posts) {
+    if (!blogGrid) return;
+    blogGrid.innerHTML = posts.map((p, index) => {
+      const catKey = getCategoryKey(p.category);
+      const isFeatured = index === 0;
+      const dateStr = p.created_at ? p.created_at.split(' ')[0] : '23/09/2026';
+      const badgeHtml = p.source === 'n8n' 
+        ? '<span class="blog-badge badge-orange"><i class="fa-solid fa-robot"></i> n8n Automation</span>'
+        : (isFeatured ? '<span class="blog-badge badge-orange"><i class="fa-solid fa-fire"></i> Bài viết nổi bật</span>' : '');
+
+      return `
+        <article class="blog-card ${isFeatured ? 'featured-blog' : ''}" data-category="${catKey}" data-tags="${(p.tags || '') + ' ' + (p.category || '')}">
+          <div class="blog-card-thumb">
+            ${badgeHtml}
+            <img src="${p.cover_image || 'assets/images/portfolio-banner.jpg'}" alt="${p.title}" onerror="this.onerror=null; this.src='assets/images/portfolio-banner.jpg';" />
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-meta">
+              <span class="blog-category">${p.category}</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> ${p.read_time || '5 phút đọc'}</span>
+              <span class="meta-dot">•</span>
+              <span class="blog-date">${dateStr}</span>
+            </div>
+            <h2 class="blog-title">
+              <a href="blog-detail.html?slug=${p.slug}">${p.title}</a>
+            </h2>
+            <p class="blog-excerpt">
+              ${p.excerpt || ''}
+            </p>
+            <div class="blog-card-footer">
+              <div class="blog-author">
+                <img src="assets/images/profile.jpg" alt="${p.author || 'Trương Bảo Ngọc'}" class="author-avatar" onerror="this.src='assets/images/profile.jpg'" />
+                <span>${p.author || 'Trương Bảo Ngọc'}</span>
+              </div>
+              <a href="blog-detail.html?slug=${p.slug}" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    // Cập nhật lại danh sách cards
+    blogCards = document.querySelectorAll('.blog-card');
+    filterArticles();
+  }
+
+  loadBlogFromApi();
+
+  function filterArticles() {
+    const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+    let visibleCount = 0;
+    const cards = document.querySelectorAll('.blog-card');
+
+    cards.forEach(card => {
+      const category = card.dataset.category || '';
+      const tags = card.dataset.tags || '';
+      const title = (card.querySelector('.blog-title') ? card.querySelector('.blog-title').textContent : '').toLowerCase();
+      const excerpt = (card.querySelector('.blog-excerpt') ? card.querySelector('.blog-excerpt').textContent : '').toLowerCase();
+
+      // Kiểm tra filter category
+      const matchCategory = currentFilter === 'all' || category.includes(currentFilter);
+
+      // Kiểm tra query search
+      const matchQuery = !query || title.includes(query) || excerpt.includes(query) || tags.includes(query);
+
+      if (matchCategory && matchQuery) {
+        card.style.display = card.classList.contains('featured-blog') ? (window.innerWidth > 900 ? 'grid' : 'flex') : 'flex';
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+        card.classList.add('hidden');
+      }
+    });
+
+    if (totalCount) totalCount.textContent = visibleCount;
+    if (noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    if (clearBtn) clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+  }
+
+  // Filter Buttons Click
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.bfilter;
+      filterArticles();
+    });
+  });
+
+  // Live Search
+  if (searchInput) {
+    searchInput.addEventListener('input', filterArticles);
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      filterArticles();
+      searchInput.focus();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      currentFilter = 'all';
+      filterBtns.forEach(b => b.classList.remove('active'));
+      filterBtns[0].classList.add('active');
+      filterArticles();
+    });
+  }
+
+  // Theme Toggle
+  const R = document.getElementById('ngoc-portfolio');
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('tbn-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+  function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    if (R) {
+      if (isDark) R.classList.add('dark-theme');
+      else R.classList.remove('dark-theme');
+    }
+    if (isDark) {
+      document.body.classList.add('dark-theme');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+      document.documentElement.classList.remove('dark-theme');
+    }
+    if (themeToggleBtn) {
+      themeToggleBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun" style="color: #f58220;"></i>' : '<i class="fa-solid fa-moon"></i>';
+      themeToggleBtn.setAttribute('title', isDark ? 'Chuyển sang chế độ Sáng' : 'Chuyển sang chế độ Tối');
+    }
+  }
+  applyTheme(savedTheme);
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = R && R.classList.contains('dark-theme');
+      const newTheme = isDark ? 'light' : 'dark';
+      localStorage.setItem('tbn-theme', newTheme);
+      applyTheme(newTheme);
+    });
+  }
+
+  // Mobile Navbar Toggle
+  const navToggle = document.getElementById('nav-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => navMenu.classList.toggle('open'));
+  }
+});
+</script>
+</body>
+</html>

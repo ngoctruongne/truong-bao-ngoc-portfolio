@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Chiến lược kết hợp Performance Marketing và Trade Marketing: Tối ưu ROI từ Online đến Điểm bán (In-store) — Trương Bảo Ngọc" />
+  <title>Chiến lược kết hợp Performance & Trade Marketing | Trương Bảo Ngọc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="ngoc-portfolio">
+
+  <!-- TOP PROGRESS BAR (Đồng bộ trên đỉnh màn hình cho mobile) -->
+  <div class="top-read-progress" id="top-read-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">TBN<span class="dot">.</span></a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html" class="nav-link" style="color: var(--core) !important; font-weight: 700;"><i class="fa-solid fa-atom"></i> Mô Hình Core</a></li>
+        <li><a href="portfolio.html#about" class="nav-link">Về tôi</a></li>
+        <li><a href="portfolio.html#expertise" class="nav-link">Chuyên môn</a></li>
+        <li><a href="portfolio.html#experience" class="nav-link">Kinh nghiệm</a></li>
+        <li><a href="portfolio.html#portfolio" class="nav-link">Portfolio</a></li>
+        <li><a href="blog.html" class="nav-link active">Kiến thức</a></li>
+        <li><a href="portfolio.html#contact" class="nav-link">Liên hệ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Đổi chế độ Sáng / Tối" title="Chuyển chế độ Sáng / Tối">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BLOG HERO HEADER -->
+  <header class="blog-detail-hero">
+    <div class="container">
+      <div class="blog-breadcrumb">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Trang chủ</a>
+        <i class="fa-solid fa-chevron-right bread-sep"></i>
+        <a href="blog.html">Kiến thức</a>
+        <i class="fa-solid fa-chevron-right bread-sep"></i>
+        <span id="detail-breadcrumb-cat">Performance &amp; Trade Marketing</span>
+      </div>
+
+      <div class="blog-detail-meta-top">
+        <span class="blog-badge badge-orange" id="detail-badge"><i class="fa-solid fa-bolt"></i> Chiến lược thực chiến</span>
+        <span class="meta-item" id="detail-meta-date"><i class="fa-regular fa-calendar"></i> 22/09/2026</span>
+        <span class="meta-item" id="detail-meta-read"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+        <span class="meta-item" id="detail-meta-views"><i class="fa-regular fa-eye"></i> 1,420 lượt xem</span>
+      </div>
+
+      <h1 class="blog-detail-title" id="detail-title">
+        Chiến lược kết hợp <span class="gradient-text">Performance Marketing</span> và <span class="gradient-text">Trade Marketing</span>: Tối ưu ROI từ Online đến Điểm bán (In-store)
+      </h1>
+
+      <p class="blog-detail-subtitle" id="detail-subtitle">
+        Tại sao chạy quảng cáo số ra đơn nhưng điểm bán vẫn tồn kho? Cách thức đồng bộ hóa phễu Online-to-Offline (O2O) để chuyển đổi lượt hiển thị trên mạng thành lượt mua hàng thực tế tại 200+ siêu thị và đại lý.
+      </p>
+
+      <div class="blog-detail-author-row">
+        <div class="author-left">
+          <img src="assets/images/profile.jpg" alt="Trương Bảo Ngọc" class="detail-avatar" onerror="this.src='https://ngoctb.io.vn/wp-content/uploads/2026/04/product_image_4.png'" />
+          <div>
+            <strong id="detail-author-name">Trương Bảo Ngọc</strong>
+            <span id="detail-author-role">Technical Business Development &amp; Growth Marketing Executive</span>
+          </div>
+        </div>
+        <div class="social-share-quick">
+          <span>Chia sẻ:</span>
+          <a href="#" class="share-btn" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="share-btn" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <button class="share-btn" id="copy-link-btn" title="Copy link bài viết"><i class="fa-solid fa-link"></i></button>
+        </div>
+      </div>
+
+      <!-- ẢNH BÌA BÀI VIẾT (FEATURED COVER IMAGE) -->
+      <div class="blog-detail-cover-wrap">
+        <img id="detail-cover-img" class="blog-detail-cover-img" src="assets/images/portfolio-banner.jpg" alt="Ảnh bìa bài viết" onerror="this.onerror=null; this.src='assets/images/portfolio-banner.jpg';" />
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN ARTICLE CONTAINER (LAYOUT 2 CỘT: MENU & TIẾN ĐỘ BÊN TRÁI) -->
+  <main class="blog-detail-main">
+    <div class="container">
+      <div class="blog-layout">
+
+        <!-- CỘT TRÁI: TIẾN ĐỘ ĐỌC & MENU MỤC LỤC (STICKY SIDEBAR) -->
+        <aside class="blog-sidebar-left" id="blog-sidebar">
+          
+          <!-- WIDGET TIẾN ĐỘ ĐỌC (%) -->
+          <div class="reading-progress-widget">
+            <div class="progress-widget-header">
+              <span class="progress-widget-tag"><i class="fa-solid fa-chart-pie"></i> TIẾN ĐỘ ĐỌC</span>
+              <span class="progress-percent-val" id="reading-percent-num">0%</span>
+            </div>
+            
+            <!-- Thanh Progress Bar -->
+            <div class="reading-bar-track">
+              <div class="reading-bar-fill" id="reading-bar-fill" style="width: 0%;"></div>
+            </div>
+            
+            <div class="progress-status-text">
+              <span id="reading-status-label">Bắt đầu đọc bài</span>
+              <span class="reading-est-time" id="reading-time-left">~6 phút</span>
+            </div>
+          </div>
+
+          <!-- WIDGET MENU MỤC LỤC BÀI VIẾT (TABLE OF CONTENTS) -->
+          <div class="toc-widget">
+            <div class="toc-header">
+              <i class="fa-solid fa-list-ul"></i>
+              <h4>MỤC LỤC NỘI DUNG</h4>
+            </div>
+            <nav class="toc-list" id="toc-nav">
+              <a href="#sec-1" class="toc-link active" data-target="sec-1">
+                <span class="toc-num">01</span>
+                <span class="toc-title">Đặt vấn đề: Sự đứt gãy giữa Online Ads và Kênh phân phối</span>
+              </a>
+              <a href="#sec-2" class="toc-link" data-target="sec-2">
+                <span class="toc-num">02</span>
+                <span class="toc-title">Mô hình O2O: Ba điểm chạm chuyển đổi từ Màn hình đến Kệ hàng</span>
+              </a>
+              <a href="#sec-3" class="toc-link" data-target="sec-3">
+                <span class="toc-num">03</span>
+                <span class="toc-title">Kỹ thuật nhắm mục tiêu Localized Ads thúc đẩy Foot-traffic</span>
+              </a>
+              <a href="#sec-4" class="toc-link" data-target="sec-4">
+                <span class="toc-num">04</span>
+                <span class="toc-title">Case Study: Tăng trưởng 35% Sell-out tại hệ thống siêu thị</span>
+              </a>
+              <a href="#sec-5" class="toc-link" data-target="sec-5">
+                <span class="toc-num">05</span>
+                <span class="toc-title">Đúc kết 4 nguyên tắc vàng cho Marketer thời kỳ mới</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- NÚT QUAY LẠI & HÀNH ĐỘNG -->
+          <div class="sidebar-actions">
+            <a href="blog.html" class="btn btn-ghost btn-sm-back">
+              <i class="fa-solid fa-arrow-left"></i> Danh mục kiến thức
+            </a>
+            <a href="index.html#contact" class="btn btn-primary btn-sm-talk">
+              <i class="fa-solid fa-comment-dots"></i> Cần tư vấn chiến dịch?
+            </a>
+          </div>
+
+        </aside>
+
+        <!-- CỘT PHẢI: NỘI DUNG CHI TIẾT BÀI VIẾT -->
+        <article class="blog-content-body" id="article-content">
+
+          <!-- ĐOẠN DẪN NHẬP (LEDE) -->
+          <p class="article-lede">
+            Trong suốt hơn 6 năm triển khai cả Performance Marketing lẫn Trade Marketing, một trong những nghịch lý phổ biến nhất mà tôi từng chứng kiến tại nhiều doanh nghiệp là: <strong>Bộ phận Digital tự hào báo cáo ROAS đạt 400%, nhưng Giám đốc Kinh doanh tại các đại lý và siêu thị vẫn phàn nàn vì hàng tồn kho không bán được (Sell-out thấp).</strong> Tại sao lại có khoảng cách lớn như vậy?
+          </p>
+
+          <!-- PHẦN 1 -->
+          <section class="article-section" id="sec-1">
+            <h2>01. Đặt vấn đề: Sự đứt gãy giữa Online Ads và Kênh phân phối</h2>
+            <p>
+              Phần lớn các chiến dịch Digital Marketing thông thường tập trung toàn bộ nguồn lực vào việc tối ưu chỉ số ảo trên màn hình: Cost per Click (CPC), Click-Through Rate (CTR) hoặc số đơn hàng nhỏ lẻ trên Website/Landing page. Tuy nhiên, đối với các ngành hàng tiêu dùng (FMCG), điện máy, dược mỹ phẩm hay sản phẩm phân phối qua hệ thống đại lý:
+            </p>
+            <ul>
+              <li><strong>Hơn 75% doanh thu thực tế</strong> vẫn diễn ra tại điểm bán vật lý (In-store, siêu thị, đại lý).</li>
+              <li>Khách hàng nhìn thấy quảng cáo trên Facebook/TikTok, nhưng họ sẽ <strong>không bấm mua online ngay</strong> mà có xu hướng tiện đường ghé siêu thị hoặc đại lý gần nhà để xem thử.</li>
+              <li>Nếu điểm bán không có ấn phẩm POSM đồng bộ, nhân viên bán hàng không biết về chương trình khuyến mãi đang chạy online, thì <strong>khách hàng sẽ lập tức chuyển sang chọn nhãn hàng đối thủ cạnh tranh trên cùng kệ trưng bày!</strong></li>
+            </ul>
+
+            <!-- CALLOUT BOX ĐẶC TRƯNG PHUONGBUILDER -->
+            <div class="article-callout">
+              <div class="callout-icon"><i class="fa-solid fa-lightbulb"></i></div>
+              <div class="callout-text">
+                <strong>Insight cốt lõi từ thực chiến:</strong>
+                <p>Quảng cáo số (Performance) tạo ra "Lực kéo" (Pull) gợi mở nhu cầu, còn Trade Marketing tạo ra "Lực đẩy" (Push) chốt hạ quyết định mua tại điểm chạm cuối cùng. Thiếu một trong hai, ngân sách marketing của bạn đang bị lãng phí ít nhất 40%.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- PHẦN 2 -->
+          <section class="article-section" id="sec-2">
+            <h2>02. Mô hình O2O: Ba điểm chạm chuyển đổi từ Màn hình đến Kệ hàng</h2>
+            <p>
+              Để khắc phục sự đứt gãy này, tôi áp dụng mô hình liên kết 3 điểm chạm khép kín (Online-to-Offline Funnel):
+            </p>
+
+            <div class="framework-grid">
+              <div class="framework-card">
+                <span class="framework-step">Điểm chạm 1</span>
+                <h3>Nhận diện số (Digital Awareness)</h3>
+                <p>Sử dụng Meta Ads &amp; TikTok Ads để tạo ấn tượng mạnh về tính năng nổi bật và voucher khuyến mãi áp dụng độc quyền tại điểm bán.</p>
+              </div>
+              <div class="framework-card">
+                <span class="framework-step">Điểm chạm 2</span>
+                <h3>Điều hướng vị trí (Location Drive)</h3>
+                <p>Cung cấp tính năng tìm đại lý gần nhất (Store Locator) ngay trên bài quảng cáo, kèm mã QR code lưu mã giảm giá vào điện thoại.</p>
+              </div>
+              <div class="framework-card">
+                <span class="framework-step">Điểm chạm 3</span>
+                <h3>Chốt đơn tại kệ (In-store Conversion)</h3>
+                <p>Hệ thống POSM, Standee, Wobbler mang hình ảnh và thông điệp y hệt quảng cáo số, giúp khách hàng nhận ra thương hiệu ngay trong 3 giây đầu tiên.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- PHẦN 3 -->
+          <section class="article-section" id="sec-3">
+            <h2>03. Kỹ thuật nhắm mục tiêu Localized Ads thúc đẩy Foot-traffic</h2>
+            <p>
+              Một sai lầm phổ biến là chạy quảng cáo trên toàn quốc mà không quan tâm đại lý ở tỉnh nào đang có sẵn hàng. Kỹ thuật nhắm mục tiêu siêu địa phương (Hyper-local Targeting) là vũ khí lợi hại nhất:
+            </p>
+            <p>
+              Thay vì thả nổi target bán kính 15-25km, chúng tôi khoanh vùng bán kính <strong>từ 2km đến 5km</strong> xung quanh từng đại lý hoặc siêu thị trọng điểm:
+            </p>
+            <ol>
+              <li><strong>Creative cá nhân hóa theo địa phương:</strong> Tiêu đề ghi rõ: <em>"Ưu đãi đặc biệt đã có mặt tại Siêu thị Big C / WinMart [Tên Quận]!"</em></li>
+              <li><strong>Tối ưu hóa thời gian hiển thị:</strong> Đẩy mạnh ngân sách vào khung giờ 16:30 - 19:30 các ngày trong tuần và cả ngày Thứ Bảy, Chủ Nhật khi người tiêu dùng có hành vi mua sắm trực tiếp.</li>
+              <li><strong>Phối hợp nhân sự PG tại điểm bán:</strong> Nhân viên bán hàng được thông báo trước về ngày cao điểm chạy ads để sẵn sàng hàng mẫu (sampling) và tư vấn quà tặng.</li>
+            </ol>
+          </section>
+
+          <!-- PHẦN 4 -->
+          <section class="article-section" id="sec-4">
+            <h2>04. Case Study: Tăng trưởng 35% Sell-out tại hệ thống siêu thị</h2>
+            <p>
+              Trong dự án hợp tác triển khai cho một thương hiệu ngành hàng tiêu dùng nhanh (FMCG), chúng tôi đã áp dụng đồng bộ chiến lược này tại hơn 200 điểm bán siêu thị:
+            </p>
+
+            <!-- BẢNG KẾT QUẢ SỐ LIỆU MINH CHỨNG -->
+            <div class="article-table-wrap">
+              <table class="article-table">
+                <thead>
+                  <tr>
+                    <th>Chỉ số đo lường</th>
+                    <th>Trước khi tối ưu O2O</th>
+                    <th>Sau khi kết hợp Performance + Trade</th>
+                    <th>Mức tăng trưởng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Chi phí trên mỗi khách ghé quầy</strong></td>
+                    <td>45.000 VNĐ</td>
+                    <td><strong>18.500 VNĐ</strong></td>
+                    <td class="stat-green">-58% chi phí</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tỷ lệ chuyển đổi mua hàng (Conversion Rate)</strong></td>
+                    <td>12.4%</td>
+                    <td><strong>28.6%</strong></td>
+                    <td class="stat-green">+2.3 lần</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tốc độ bán hàng ra (Sell-out Speed)</strong></td>
+                    <td>1.200 sp / tuần</td>
+                    <td><strong>1.620 sp / tuần</strong></td>
+                    <td class="stat-green">+35% doanh số</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Lợi tức đầu tư tiếp thị (ROAS tổng thể)</strong></td>
+                    <td>180%</td>
+                    <td><strong>350%</strong></td>
+                    <td class="stat-green">+170% ROI</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <blockquote>
+              "Khi quảng cáo online nhắc khách hàng nhớ đến thương hiệu, và điểm bán cung cấp đúng trải nghiệm mà họ kỳ vọng, rào cản do dự mua sắm gần như biến mất hoàn toàn."
+            </blockquote>
+          </section>
+
+          <!-- PHẦN 5 -->
+          <section class="article-section" id="sec-5">
+            <h2>05. Đúc kết 4 nguyên tắc vàng cho Marketer thời kỳ mới</h2>
+            <p>
+              Để một chiến dịch tiếp thị mang lại kết quả thực tế và tiền về tài khoản doanh nghiệp, hãy luôn ghi nhớ 4 nguyên tắc sau:
+            </p>
+            <div class="principles-list">
+              <div class="principle-item">
+                <span class="p-num">01</span>
+                <div>
+                  <h4>Thống nhất Visual Key trên mọi mặt trận</h4>
+                  <p>Màu sắc, hình ảnh người đại diện và câu khẩu hiệu (tagline) trên Facebook Ads phải trùng khớp hoàn toàn với kệ quầy POSM tại siêu thị.</p>
+                </div>
+              </div>
+              <div class="principle-item">
+                <span class="p-num">02</span>
+                <div>
+                  <h4>Đo lường bằng chỉ số tài chính, không chỉ bằng Vanity Metrics</h4>
+                  <p>Lượt like, share, view chỉ có giá trị khi nó trực tiếp dẫn đến doanh số bán lẻ (Sell-out) và số lượng khách hàng quay lại.</p>
+                </div>
+              </div>
+              <div class="principle-item">
+                <span class="p-num">03</span>
+                <div>
+                  <h4>Team Digital và Team Trade phải họp chung hằng tuần</h4>
+                  <p>Team Trade báo cáo điểm bán nào đang thiếu khách, Team Digital sẽ dồn ngân sách local ads vào bán kính điểm bán đó để kéo khách đến.</p>
+                </div>
+              </div>
+              <div class="principle-item">
+                <span class="p-num">04</span>
+                <div>
+                  <h4>Tối ưu liên tục dựa trên dữ liệu phản hồi tại quầy</h4>
+                  <p>Lắng nghe phản hồi thực tế của khách hàng tại đại lý để điều chỉnh nội dung content quảng cáo online ngay trong ngày.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- BOX THÔNG TIN TÁC GIẢ -->
+          <div class="article-author-card">
+            <img src="assets/images/profile.jpg" alt="Trương Bảo Ngọc" class="author-card-avatar" onerror="this.src='https://ngoctb.io.vn/wp-content/uploads/2026/04/product_image_4.png'" />
+            <div class="author-card-info">
+              <span class="author-card-role">Tác giả bài viết</span>
+              <h3>Trương Bảo Ngọc</h3>
+              <p>Chuyên gia Digital Marketing với hơn 6 năm kinh nghiệm trong Performance Marketing, Brand Building và Trade Marketing. Đã trực tiếp quản lý ngân sách quảng cáo lớn và dẫn dắt các chiến dịch tăng trưởng đa kênh cho nhiều thương hiệu FMCG &amp; E-commerce.</p>
+              <div class="author-card-links">
+                <a href="index.html#contact" class="btn btn-primary btn-sm"><i class="fa-solid fa-paper-plane"></i> Kết nối hợp tác</a>
+                <a href="index.html#portfolio" class="btn btn-ghost btn-sm"><i class="fa-solid fa-briefcase"></i> Xem kết quả dự án</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- BÀI VIẾT LIÊN QUAN -->
+          <div class="related-posts-section">
+            <h3 class="related-title"><i class="fa-solid fa-book-open"></i> Bài viết liên quan cùng chủ đề</h3>
+            <div class="related-grid">
+              <a href="blog-detail.html" class="related-card">
+                <span class="related-cat">Performance Ads</span>
+                <h4>Cấu trúc chiến dịch Meta Ads 2026: Khi nào dùng CBO và khi nào nên tách nhóm ABO?</h4>
+                <span class="related-time"><i class="fa-regular fa-clock"></i> 5 phút đọc</span>
+              </a>
+              <a href="blog-detail.html" class="related-card">
+                <span class="related-cat">Trade Marketing</span>
+                <h4>Nghệ thuật tổ chức gian hàng triển lãm thương mại: Thu hút 500+ Qualified Leads</h4>
+                <span class="related-time"><i class="fa-regular fa-clock"></i> 6 phút đọc</span>
+              </a>
+            </div>
+          </div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-logo">TBN<span class="dot">.</span></p>
+      <p class="footer-copy">© 2026 Trương Bảo Ngọc. All rights reserved.</p>
+      <p class="footer-sub">Digital Marketing Expert — Performance · Branding · Trade Marketing</p>
+    </div>
+  </footer>
+
+</div><!-- end #ngoc-portfolio -->
+
+<!-- SCRIPT RIÊNG CHO TRANG CHI TIẾT BÀI VIẾT (TÍNH % TIẾN ĐỘ ĐỌC VÀ SCROLLSPY MỤC LỤC) -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const article = document.getElementById('article-content');
+  const percentNum = document.getElementById('reading-percent-num');
+  const barFill = document.getElementById('reading-bar-fill');
+  const topBar = document.getElementById('top-read-progress');
+  const statusLabel = document.getElementById('reading-status-label');
+  const timeLeft = document.getElementById('reading-time-left');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sections = document.querySelectorAll('.article-section');
+
+  // 1. TÍNH TIẾN ĐỘ ĐỌC % VÀ CẬP NHẬT GIAO DIỆN
+  function updateReadingProgress() {
+    if (!article) return;
+    const articleBox = article.getBoundingClientRect();
+    const articleTop = article.offsetTop;
+    const articleHeight = article.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const scrollY = window.scrollY;
+
+    // Khoảng cách bắt đầu và kết thúc của bài viết
+    const startScroll = articleTop - 120;
+    const endScroll = articleTop + articleHeight - windowHeight;
+    const totalDistance = endScroll - startScroll;
+
+    let percentage = 0;
+    if (scrollY <= startScroll) {
+      percentage = 0;
+    } else if (scrollY >= endScroll) {
+      percentage = 100;
+    } else {
+      percentage = Math.round(((scrollY - startScroll) / totalDistance) * 100);
+    }
+
+    // Giới hạn 0 - 100%
+    percentage = Math.max(0, Math.min(100, percentage));
+
+    // Cập nhật text % và thanh progress ở sidebar trái
+    if (percentNum) percentNum.textContent = percentage + '%';
+    if (barFill) barFill.style.width = percentage + '%';
+    if (topBar) topBar.style.width = percentage + '%';
+
+    // Cập nhật trạng thái đọc
+    if (statusLabel) {
+      if (percentage === 0) statusLabel.textContent = 'Bắt đầu đọc';
+      else if (percentage < 30) statusLabel.textContent = 'Đang đọc phần mở đầu';
+      else if (percentage < 70) statusLabel.textContent = 'Đang nghiên cứu nội dung';
+      else if (percentage < 100) statusLabel.textContent = 'Sắp hoàn thành bài viết';
+      else statusLabel.textContent = '✓ Đã đọc xong!';
+    }
+
+    if (timeLeft) {
+      const remainingMinutes = Math.max(1, Math.ceil(6 * (1 - percentage / 100)));
+      timeLeft.textContent = percentage >= 100 ? 'Hoàn thành' : `~${remainingMinutes} phút còn lại`;
+    }
+
+    // 2. SCROLLSPY CHO MENU MỤC LỤC BÊN TAY TRÁI
+    let currentSectionId = '';
+    const activeSections = document.querySelectorAll('.article-section, .article-content h2');
+    activeSections.forEach(sec => {
+      const secTop = sec.offsetTop - 160;
+      if (scrollY >= secTop) {
+        currentSectionId = sec.getAttribute('id');
+      }
+    });
+
+    if (currentSectionId) {
+      document.querySelectorAll('.toc-link').forEach(link => {
+        if (link.dataset.target === currentSectionId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+  }
+
+  window.addEventListener('scroll', updateReadingProgress, { passive: true });
+  updateReadingProgress(); // Kích hoạt ngay khi tải trang
+
+  function rebindTocEvents() {
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.dataset.target;
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          window.scrollTo({
+            top: targetEl.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+    updateReadingProgress();
+  }
+  rebindTocEvents();
+
+  // NẠP BÀI VIẾT ĐỘNG TỪ API THEO THAM SỐ URL ?slug=...
+  const urlParams = new URLSearchParams(window.location.search);
+  const postSlug = urlParams.get('slug');
+
+  async function loadPostDetailFromApi() {
+    if (!postSlug) return;
+    try {
+      const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}`);
+      const data = await res.json();
+      if (data.success && data.post) {
+        const p = data.post;
+        document.title = `${p.title} | Trương Bảo Ngọc`;
+
+        // Tiêu đề & Tóm tắt
+        const titleEl = document.getElementById('detail-title');
+        if (titleEl) titleEl.textContent = p.title;
+
+        const subtitleEl = document.getElementById('detail-subtitle');
+        if (subtitleEl) subtitleEl.textContent = p.excerpt || '';
+
+        // Breadcrumb chuyên mục & Badge
+        const catBreadcrumb = document.getElementById('detail-breadcrumb-cat');
+        if (catBreadcrumb) catBreadcrumb.textContent = p.category || 'Kiến thức chuyên sâu';
+
+        const badgeEl = document.getElementById('detail-badge');
+        if (badgeEl) {
+          if (p.source === 'n8n') {
+            badgeEl.innerHTML = '<i class="fa-solid fa-robot"></i> n8n Automation';
+          } else {
+            badgeEl.innerHTML = `<i class="fa-solid fa-bolt"></i> ${p.category || 'Chiến lược'}`;
+          }
+        }
+
+        // Meta thông số (Ngày đăng, thời gian đọc, lượt xem)
+        const dateEl = document.getElementById('detail-meta-date');
+        if (dateEl) dateEl.innerHTML = `<i class="fa-regular fa-calendar"></i> ${p.created_at ? p.created_at.split(' ')[0] : '23/09/2026'}`;
+
+        const readEl = document.getElementById('detail-meta-read');
+        if (readEl) readEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${p.read_time || '5 phút đọc'}`;
+
+        const viewsEl = document.getElementById('detail-meta-views');
+        if (viewsEl) viewsEl.innerHTML = `<i class="fa-regular fa-eye"></i> ${(p.views || 1).toLocaleString()} lượt xem`;
+
+        // Tác giả
+        const authorEl = document.getElementById('detail-author-name');
+        if (authorEl && p.author) authorEl.textContent = p.author;
+
+        // ẢNH BÌA BÀI VIẾT (FEATURED COVER IMAGE)
+        const coverImgEl = document.getElementById('detail-cover-img');
+        if (coverImgEl) {
+          const imgSrc = p.cover_image || 'assets/images/portfolio-banner.jpg';
+          coverImgEl.src = imgSrc;
+          coverImgEl.alt = p.title;
+        }
+
+        // Nội dung bài viết
+        const contentEl = document.getElementById('article-content');
+        if (contentEl && p.content) {
+          contentEl.innerHTML = p.content;
+
+          // Tự động quét các thẻ h2 để tái sinh động menu Mục lục TOC bên trái
+          const h2List = contentEl.querySelectorAll('h2');
+          const tocNav = document.getElementById('toc-nav');
+          if (tocNav && h2List.length > 0) {
+            tocNav.innerHTML = '';
+            h2List.forEach((h2, idx) => {
+              const secId = `sec-h2-${idx + 1}`;
+              h2.setAttribute('id', secId);
+              const numStr = (idx + 1).toString().padStart(2, '0');
+              const a = document.createElement('a');
+              a.href = `#${secId}`;
+              a.className = `toc-link ${idx === 0 ? 'active' : ''}`;
+              a.dataset.target = secId;
+              a.innerHTML = `<span class="toc-num">${numStr}</span><span class="toc-title">${h2.textContent}</span>`;
+              tocNav.appendChild(a);
+            });
+          }
+        }
+
+        rebindTocEvents();
+      }
+    } catch (err) {
+      console.warn('Lỗi nạp bài viết chi tiết từ API:', err);
+    }
+  }
+
+  loadPostDetailFromApi();
+
+  // 4. COPY LINK BÀI VIẾT
+  const copyBtn = document.getElementById('copy-link-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link"></i>', 2000);
+      });
+    });
+  }
+
+  // 5. MOBILE NAVBAR TOGGLE
+  const navToggle = document.getElementById('nav-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => navMenu.classList.toggle('open'));
+  }
+
+  // 6. THEME TOGGLE (DARK / LIGHT MODE)
+  const R = document.getElementById('ngoc-portfolio');
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('tbn-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+  function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    if (R) {
+      if (isDark) R.classList.add('dark-theme');
+      else R.classList.remove('dark-theme');
+    }
+    if (isDark) {
+      document.body.classList.add('dark-theme');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+      document.documentElement.classList.remove('dark-theme');
+    }
+    if (themeToggleBtn) {
+      themeToggleBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun" style="color: #f58220;"></i>' : '<i class="fa-solid fa-moon"></i>';
+      themeToggleBtn.setAttribute('title', isDark ? 'Chuyển sang chế độ Sáng' : 'Chuyển sang chế độ Tối');
+    }
+  }
+  applyTheme(savedTheme);
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = R && R.classList.contains('dark-theme');
+      const newTheme = isDark ? 'light' : 'dark';
+      localStorage.setItem('tbn-theme', newTheme);
+      applyTheme(newTheme);
+    });
+  }
+});
+</script>
+</body>
+</html>
