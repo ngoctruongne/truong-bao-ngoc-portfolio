@@ -1,0 +1,7 @@
+# Chuyển hướng 301 chuẩn hóa URL trang chủ (Loại bỏ index.html)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.html\ HTTP/
+  RewriteRule ^index\.html$ / [R=301,L]
+</IfModule>

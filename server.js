@@ -536,6 +536,16 @@ const server = http.createServer(async (req, res) => {
   // ==========================================
   // ===== PHỤC VỤ STATIC FILE & LIVE RELOAD =====
   // ==========================================
+  // Chuẩn hóa Canonical URL: Chuyển hướng vĩnh viễn /index.html về /
+  if (pathname === '/index.html') {
+    res.writeHead(301, {
+      'Location': '/',
+      'Cache-Control': 'public, max-age=31536000'
+    });
+    res.end();
+    return;
+  }
+
   let reqPath = decodeURI(pathname);
   if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
   if (reqPath === '/admin' || reqPath === '/admin/') reqPath = '/admin.html';
