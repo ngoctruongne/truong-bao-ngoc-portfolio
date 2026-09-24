@@ -375,6 +375,34 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // 3.5. TỰ ĐỘNG HÓA DEPLOY TỪ GITHUB WEBHOOK: /api/webhook/deploy
+  if (pathname === '/api/webhook/deploy' && (req.method === 'POST' || req.method === 'GET')) {
+    const { exec } = require('child_process');
+    console.log('[Webhook] Nhận tín hiệu từ GitHub, đang tự động chạy git pull...');
+
+    exec('git pull origin main', { cwd: ROOT }, (err, stdout, stderr) => {
+      if (err) {
+        console.error('[Webhook] Lỗi khi kéo code:', err.message);
+        return sendJson(res, 500, { success: false, error: err.message, stderr });
+      }
+      console.log('[Webhook] Đã kéo code thành công:\n', stdout);
+
+      // Báo cho Phusion Passenger trên cPanel restart nếu cần
+      try {
+        const tmpDir = path.join(ROOT, 'tmp');
+        if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+        fs.writeFileSync(path.join(tmpDir, 'restart.txt'), String(Date.now()));
+      } catch (e) {}
+
+      return sendJson(res, 200, {
+        success: true,
+        message: 'Hosting đã tự động cập nhật code mới nhất từ GitHub!',
+        output: stdout
+      });
+    });
+    return;
+  }
+
   // 4. API BÀI VIẾT: /api/posts
   if (pathname === '/api/posts' || pathname.startsWith('/api/posts/')) {
     const subPath = pathname.replace('/api/posts', '');
