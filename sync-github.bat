@@ -8,12 +8,15 @@ echo.
 
 where git >nul 2>nul
 if %errorlevel% neq 0 (
-    echo [LOI] May tinh cua ban chua cai dat Git!
-    echo Vui long cai dat Git tai https://git-scm.com/download/win
-    echo hoac mo PowerShell chay: winget install --id Git.Git -e --source winget
-    echo.
-    pause
-    exit /b 1
+    if exist "C:\Program Files\Git\cmd\git.exe" (
+        set "PATH=C:\Program Files\Git\cmd;%PATH%"
+    ) else (
+        echo [LOI] May tinh cua ban chua cai dat Git!
+        echo Vui long cai dat Git tai https://git-scm.com/download/win
+        echo.
+        pause
+        exit /b 1
+    )
 )
 
 if not exist ".git" (
@@ -43,8 +46,8 @@ git add .
 echo [*] Dang tao commit...
 git commit -m "%commit_msg%"
 
-echo [*] Dang day code len GitHub (git push origin main)...
-git push origin main
+echo [*] Dang day code len GitHub (git push -u origin main)...
+git push -u origin main
 
 if %errorlevel% equ 0 (
     echo.
