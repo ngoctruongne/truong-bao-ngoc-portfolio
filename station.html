@@ -741,12 +741,28 @@
     }
     @media (max-width: 480px) {
       .atom-container {
-        transform: scale(0.38) !important;
+        transform: scale(0.38);
       }
     }
     @media (max-width: 360px) {
       .atom-container {
-        transform: scale(0.34) !important;
+        transform: scale(0.34);
+      }
+    }
+    /* Thu phóng tức thì theo chiều cao màn hình Laptop/Desktop */
+    @media (max-height: 860px) and (min-width: 901px) {
+      .atom-container {
+        transform: scale(0.70);
+      }
+    }
+    @media (max-height: 740px) and (min-width: 901px) {
+      .atom-container {
+        transform: scale(0.58);
+      }
+    }
+    @media (max-height: 620px) and (min-width: 901px) {
+      .atom-container {
+        transform: scale(0.48);
       }
     }
   </style>
@@ -1250,6 +1266,7 @@
       // Mở panel & đẩy hạt nhân sang trái
       panel.classList.add('open');
       atomStage.classList.add('panel-opened');
+      autoScaleAtomSystem();
 
       if (centerHint) centerHint.style.display = 'none';
     }
@@ -1292,6 +1309,7 @@
       });
       if (centerHint) centerHint.style.display = 'flex';
       soundBeep(450, 0.05);
+      autoScaleAtomSystem();
     }
 
     panelCloseBtn.addEventListener('click', closePanel);
@@ -1305,6 +1323,41 @@
         closePanel();
       }
     });
+
+    // ===== HỆ THỐNG TỰ ĐỘNG CÂN CHỈNH TỶ LỆ THEO MỌI ĐỘ PHÂN GIẢI (RESPONSIVE AUTO-SCALING) =====
+    function autoScaleAtomSystem() {
+      const container = document.getElementById('atomContainer');
+      const panel = document.getElementById('atomPanel');
+      if (!container) return;
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobile = w <= 900;
+
+      const topOffset = isMobile ? 54 : 68;
+      const bottomOffset = isMobile ? 20 : 78;
+
+      const availH = Math.max(260, h - topOffset - bottomOffset);
+
+      const isPanelOpen = panel && panel.classList.contains('open');
+      const panelWidth = (!isMobile && isPanelOpen) ? 530 : 0;
+      const availW = Math.max(260, w - panelWidth - (isMobile ? 24 : 60));
+
+      const baseDim = 940;
+
+      let scaleByHeight = availH / baseDim;
+      let scaleByWidth = availW / baseDim;
+
+      let optimalScale = Math.min(scaleByWidth, scaleByHeight);
+      optimalScale = Math.max(0.32, Math.min(1.0, optimalScale));
+
+      container.style.setProperty('transform', `scale(${optimalScale.toFixed(3)})`, 'important');
+    }
+
+    window.addEventListener('resize', autoScaleAtomSystem);
+    window.addEventListener('DOMContentLoaded', autoScaleAtomSystem);
+    window.addEventListener('load', autoScaleAtomSystem);
+    autoScaleAtomSystem();
   </script>
 </body>
 </html>

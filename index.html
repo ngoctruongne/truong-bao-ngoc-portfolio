@@ -743,7 +743,7 @@
         min-width: 900px !important;
         min-height: 900px !important;
         flex-shrink: 0 !important;
-        transform: scale(0.42) !important;
+        transform: scale(0.42);
         transform-origin: center center !important;
         margin: auto !important;
         position: relative !important;
@@ -804,13 +804,30 @@
 
     @media (max-width: 480px) {
       .atom-container {
-        transform: scale(0.38) !important;
+        transform: scale(0.38);
       }
     }
 
     @media (max-width: 360px) {
       .atom-container {
-        transform: scale(0.34) !important;
+        transform: scale(0.34);
+      }
+    }
+
+    /* Thu phóng tức thì theo chiều cao màn hình Laptop/Desktop (CSS fallback tức thời) */
+    @media (max-height: 860px) and (min-width: 901px) {
+      .atom-container {
+        transform: scale(0.70);
+      }
+    }
+    @media (max-height: 740px) and (min-width: 901px) {
+      .atom-container {
+        transform: scale(0.58);
+      }
+    }
+    @media (max-height: 620px) and (min-width: 901px) {
+      .atom-container {
+        transform: scale(0.48);
       }
     }
   </style>
@@ -1269,6 +1286,7 @@
       // Mở panel & đẩy hạt nhân sang trái
       panel.classList.add('open');
       atomStage.classList.add('panel-opened');
+      autoScaleAtomSystem();
 
       if (centerHint) centerHint.style.display = 'none';
     }
@@ -1309,6 +1327,7 @@
         electronElements[id].classList.remove('active-electron');
       });
       if (centerHint) centerHint.style.display = 'flex';
+      autoScaleAtomSystem();
     }
 
     panelCloseBtn.addEventListener('click', closePanel);
@@ -1322,6 +1341,52 @@
         closePanel();
       }
     });
+
+    // ===== HỆ THỐNG TỰ ĐỘNG CÂN CHỈNH TỶ LỆ THEO MỌI ĐỘ PHÂN GIẢI (RESPONSIVE AUTO-SCALING) =====
+    function autoScaleAtomSystem() {
+      const container = document.getElementById('atomContainer');
+      const panel = document.getElementById('atomPanel');
+      if (!container) return;
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobile = w <= 900;
+
+      // Chiều cao thanh tiêu đề (desktop 64px, mobile 52px)
+      const topOffset = isMobile ? 54 : 68;
+      // Chiều cao thanh đáy và thông báo (desktop ~76px, mobile 20px)
+      const bottomOffset = isMobile ? 20 : 78;
+
+      // Chiều cao khả dụng thực tế để hệ nguyên tử hiển thị trọn vẹn không chạm header hay bottom HUD
+      const availH = Math.max(260, h - topOffset - bottomOffset);
+
+      // Chiều rộng khả dụng thực tế (trừ panel bên phải 530px nếu đang mở trên desktop)
+      const isPanelOpen = panel && panel.classList.contains('open');
+      const panelWidth = (!isMobile && isPanelOpen) ? 530 : 0;
+      const availW = Math.max(260, w - panelWidth - (isMobile ? 24 : 60));
+
+      // Bán kính bao phủ toàn bộ quỹ đạo nguyên tử và 5 hạt vệ tinh: 900px + padding an toàn = 940px
+      const baseDim = 940;
+
+      let scaleByHeight = availH / baseDim;
+      let scaleByWidth = availW / baseDim;
+
+      // Chọn tỷ lệ nhỏ nhất giữa chiều ngang và chiều dọc để không bao giờ bị cắt ở bất kỳ cạnh nào
+      let optimalScale = Math.min(scaleByWidth, scaleByHeight);
+
+      // Giới hạn trong khoảng an toàn tuyệt đối:
+      // - Tối thiểu 0.32 (trên điện thoại màn hình nhỏ)
+      // - Tối đa 1.0 (trên màn hình 2K, 4K để giữ độ sắc nét)
+      optimalScale = Math.max(0.32, Math.min(1.0, optimalScale));
+
+      container.style.setProperty('transform', `scale(${optimalScale.toFixed(3)})`, 'important');
+    }
+
+    window.addEventListener('resize', autoScaleAtomSystem);
+    window.addEventListener('DOMContentLoaded', autoScaleAtomSystem);
+    window.addEventListener('load', autoScaleAtomSystem);
+    // Kích hoạt tính toán ngay lập tức
+    autoScaleAtomSystem();
   </script>
 </body>
 </html>
