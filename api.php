@@ -18,9 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // 1. KẾT NỐI DATABASE SQLITE
 $dbDir = __DIR__ . '/data';
 if (!is_dir($dbDir)) {
-    @mkdir($dbDir, 0755, true);
+    @mkdir($dbDir, 0777, true);
 }
+@chmod($dbDir, 0777);
 $dbPath = $dbDir . '/blog.db';
+if (file_exists($dbPath)) {
+    @chmod($dbPath, 0666);
+}
 
 try {
     $db = new PDO('sqlite:' . $dbPath);

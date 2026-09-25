@@ -185,8 +185,11 @@
     /* KHUNG NGUYÊN TỬ TRUNG TÂM (ATOM CONTAINER) - TĂNG KÍCH THƯỚC HOÀNH TRÁNG VÀ CÂN ĐỐI */
     .atom-container {
       position: relative;
-      width: 900px;
-      height: 900px;
+      width: 900px !important;
+      height: 900px !important;
+      min-width: 900px !important;
+      min-height: 900px !important;
+      flex-shrink: 0 !important;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -728,10 +731,19 @@
         width: 100vw !important;
         height: 100vh !important;
         overflow: hidden !important;
-        position: relative !important;
+        position: fixed !important;
+        inset: 0 !important;
+      }
+      .atom-stage.panel-opened {
+        transform: none !important;
       }
       .atom-container {
-        transform: scale(0.44) !important;
+        width: 900px !important;
+        height: 900px !important;
+        min-width: 900px !important;
+        min-height: 900px !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.42) !important;
         transform-origin: center center !important;
         margin: auto !important;
         position: relative !important;
@@ -792,7 +804,13 @@
 
     @media (max-width: 480px) {
       .atom-container {
-        transform: scale(0.40) !important;
+        transform: scale(0.38) !important;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .atom-container {
+        transform: scale(0.34) !important;
       }
     }
   </style>

@@ -1049,6 +1049,36 @@
     });
 
     // ==========================================
+    // API FETCH HELPER (HỖ TRỢ CẢ CLEAN URL VÀ FALLBACK TRỰC TIẾP API.PHP)
+    // ==========================================
+    async function apiFetch(url, options = {}) {
+      const getFallbackUrl = (origUrl) => {
+        const queryIdx = origUrl.indexOf('?');
+        let path = queryIdx !== -1 ? origUrl.slice(5, queryIdx) : origUrl.slice(5); // Bỏ /api/
+        let qs = queryIdx !== -1 ? '&' + origUrl.slice(queryIdx + 1) : '';
+        return `/api.php?endpoint=${encodeURIComponent(path)}${qs}`;
+      };
+
+      try {
+        let res = await fetch(url, options);
+        // Nếu 404 hoặc 405 (do hosting chưa bật mod_rewrite cho .htaccess)
+        if ((res.status === 404 || res.status === 405) && url.startsWith('/api/')) {
+          const fbUrl = getFallbackUrl(url);
+          const fbRes = await fetch(fbUrl, options);
+          return fbRes;
+        }
+        return res;
+      } catch (err) {
+        // Fallback khi mạng lỗi hoặc đường dẫn rewrite bị lỗi
+        if (url.startsWith('/api/')) {
+          const fbUrl = getFallbackUrl(url);
+          return await fetch(fbUrl, options);
+        }
+        throw err;
+      }
+    }
+
+    // ==========================================
     // KIỂM TRA PHIÊN ĐĂNG NHẬP KHI TẢI TRANG
     // ==========================================
     async function checkAuthSession() {
@@ -1058,7 +1088,7 @@
       }
 
       try {
-        const res = await fetch('/api/auth/me', {
+        const res = await apiFetch('/api/auth/me', {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         const data = await res.json();
@@ -1110,7 +1140,7 @@
       btnLoginSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...';
 
       try {
-        const res = await fetch('/api/auth/login', {
+        const res = await apiFetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1119,7 +1149,19 @@
           })
         });
 
-        const data = await res.json();
+        let data;
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const rawText = await res.text();
+          try {
+            data = JSON.parse(rawText);
+          } catch(pe) {
+            throw new Error('Máy chủ chưa cấu hình PHP SQLite hoặc không thể tải api.php');
+          }
+        }
+
         if (data.success) {
           authToken = data.token;
           currentAdmin = data.admin;
@@ -1130,7 +1172,7 @@
           showToast(data.error || 'Đăng nhập thất bại', true);
         }
       } catch (err) {
-        showToast('Không thể kết nối đến máy chủ!', true);
+        showToast(err.message || 'Không thể kết nối đến máy chủ!', true);
       } finally {
         btnLoginSubmit.disabled = false;
         btnLoginSubmit.innerHTML = '<i class="fa-solid fa-key"></i> Xác Thực Đăng Nhập';
@@ -1142,7 +1184,7 @@
     // ==========================================
     document.getElementById('btnLogout').addEventListener('click', async () => {
       try {
-        await fetch('/api/auth/logout', {
+        await apiFetch('/api/auth/logout', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
@@ -1173,7 +1215,7 @@
     // ==========================================
     async function loadSettings() {
       try {
-        const res = await fetch('/api/settings', {
+        const res = await apiFetch('/api/settings', {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         const data = await res.json();
@@ -1196,7 +1238,7 @@
     document.getElementById('btnRegenKey').addEventListener('click', async () => {
       if (!confirm('Bạn có chắc muốn tạo lại API Key mới? Các n8n workflow cũ đang dùng Key hiện tại sẽ cần cập nhật key mới!')) return;
       try {
-        const res = await fetch('/api/settings', {
+        const res = await apiFetch('/api/settings', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
@@ -1226,7 +1268,7 @@
     async function loadPosts() {
       try {
         const search = postSearch.value.trim();
-        const res = await fetch(`/api/posts?all=true&search=${encodeURIComponent(search)}`, {
+        const res = await apiFetch(`/api/posts?all=true&search=${encodeURIComponent(search)}`, {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         const data = await res.json();
@@ -1332,7 +1374,7 @@
       reader.onload = async () => {
         try {
           showToast('Đang tải ảnh lên server...');
-          const res = await fetch('/api/upload', {
+          const res = await apiFetch('/api/upload', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1374,7 +1416,7 @@
       try {
         const url = id ? `/api/posts/${id}` : '/api/posts';
         const method = id ? 'PUT' : 'POST';
-        const res = await fetch(url, {
+        const res = await apiFetch(url, {
           method,
           headers: {
             'Content-Type': 'application/json',
@@ -1397,7 +1439,7 @@
 
     window.openEditPost = async function(id) {
       try {
-        const res = await fetch(`/api/posts/${id}`);
+        const res = await apiFetch(`/api/posts/${id}`);
         const data = await res.json();
         if (data.success && data.post) {
           const p = data.post;
@@ -1422,7 +1464,7 @@
     window.deletePost = async function(id) {
       if (!confirm('Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác!')) return;
       try {
-        const res = await fetch(`/api/posts/${id}`, {
+        const res = await apiFetch(`/api/posts/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
@@ -1453,7 +1495,7 @@
       }
 
       try {
-        const res = await fetch('/api/auth/change-password', {
+        const res = await apiFetch('/api/auth/change-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1481,7 +1523,7 @@
       const username = document.getElementById('profUsername').value.trim();
 
       try {
-        const res = await fetch('/api/auth/profile', {
+        const res = await apiFetch('/api/auth/profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

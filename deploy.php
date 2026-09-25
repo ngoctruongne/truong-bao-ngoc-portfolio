@@ -53,7 +53,7 @@ if (function_exists('shell_exec') && !in_array('shell_exec', array_map('trim', e
     if (is_dir($portfolioDir)) {
         $gitRes = @shell_exec("cd {$portfolioDir} && git fetch origin main 2>&1 && git reset --hard origin/main 2>&1");
         $logs[] = "Git: " . trim($gitRes);
-        $cpRes = @shell_exec("cp -rf {$portfolioDir}/* {$publicHtmlDir}/ 2>&1");
+        $cpRes = @shell_exec("cp -rf {$portfolioDir}/. {$publicHtmlDir}/ 2>&1 && cp -f {$portfolioDir}/.htaccess {$publicHtmlDir}/ 2>&1");
         $logs[] = "Sync to public_html: " . (empty($cpRes) ? "OK" : $cpRes);
         @touch("{$portfolioDir}/tmp/restart.txt");
         $success = true;
@@ -79,17 +79,24 @@ if (!$success) {
 
                 $subDir = $extractTo . '/truong-bao-ngoc-portfolio-main';
                 if (is_dir($subDir)) {
-                    $items = scandir($subDir);
-                    foreach ($items as $item) {
-                        if ($item !== '.' && $item !== '..') {
-                            $src = $subDir . '/' . $item;
-                            $dst = __DIR__ . '/' . $item;
-                            if (is_file($src)) {
-                                copy($src, $dst);
+                    $rcopy = function($src, $dst) use (&$rcopy) {
+                        if (is_dir($src)) {
+                            if (!is_dir($dst)) @mkdir($dst, 0755, true);
+                            $files = scandir($src);
+                            foreach ($files as $file) {
+                                if ($file != "." && $file != "..") {
+                                    $rcopy("$src/$file", "$dst/$file");
+                                }
                             }
+                        } else if (file_exists($src)) {
+                            copy($src, $dst);
                         }
+                    };
+                    $rcopy($subDir, __DIR__);
+                    if (file_exists($subDir . '/.htaccess')) {
+                        @copy($subDir . '/.htaccess', __DIR__ . '/.htaccess');
                     }
-                    $logs[] = "ZipArchive extract: OK";
+                    $logs[] = "ZipArchive recursive extract: OK";
                     $success = true;
                 }
 
