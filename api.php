@@ -190,9 +190,9 @@ if ($endpoint === 'auth/login' && $method === 'POST') {
     
     $valid = false;
     if ($admin) {
-        // Kiểm tra mật khẩu (hỗ trợ cả hash sha256 và mật khẩu mặc định admin123 / Admin@TBN2026!)
+        // Kiểm tra mật khẩu mã hóa sha256 + salt (chính xác tuyệt đối, không có backdoor)
         $calcHash = hash('sha256', $password . $admin['salt']);
-        if ($calcHash === $admin['password_hash'] || $password === 'admin123' || $password === 'Admin@TBN2026!') {
+        if (hash_equals($admin['password_hash'], $calcHash)) {
             $valid = true;
         }
     }
@@ -266,22 +266,47 @@ if ($endpoint === 'auth/change-password' && $method === 'POST') {
         exit;
     }
     $body = getJsonInput();
+    $oldPass = (string)($body['oldPassword'] ?? '');
     $newPass = (string)($body['newPassword'] ?? '');
+
+    // Kiểm tra tài khoản admin hiện tại
+    $stmt = $db->prepare('SELECT * FROM admins WHERE id = ?');
+    $stmt->execute([$auth['admin']['id']]);
+    $admin = $stmt->fetch();
+    if (!$admin) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'Không tìm thấy tài khoản quản trị!']);
+        exit;
+    }
+
+    // Xác thực mật khẩu cũ
+    $oldHash = hash('sha256', $oldPass . $admin['salt']);
+    if (!hash_equals($admin['password_hash'], $oldHash)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Mật khẩu hiện tại không chính xác!']);
+        exit;
+    }
+
     if (strlen($newPass) < 6) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Mật khẩu mới phải có ít nhất 6 ký tự']);
         exit;
     }
+
     $salt = bin2hex(random_bytes(16));
     $hash = hash('sha256', $newPass . $salt);
     $db->prepare('UPDATE admins SET password_hash = ?, salt = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
        ->execute([$hash, $salt, $auth['admin']['id']]);
     
+    // Thu hồi toàn bộ session cũ của admin này (buộc các thiết bị khác phải đăng nhập lại với mật khẩu mới)
+    $db->prepare('DELETE FROM admin_sessions WHERE admin_id = ?')->execute([$auth['admin']['id']]);
+
+    // Cấp session mới cho thiết bị hiện tại
     $token = bin2hex(random_bytes(32));
     $db->prepare('INSERT INTO admin_sessions (token, admin_id, username, expires_at) VALUES (?, ?, ?, ?)')
        ->execute([$token, $auth['admin']['id'], $auth['admin']['username'], time() + (7 * 24 * 3600)]);
     
-    echo json_encode(['success' => true, 'token' => $token, 'message' => 'Đổi mật khẩu thành công!']);
+    echo json_encode(['success' => true, 'token' => $token, 'message' => 'Đổi mật khẩu thành công! Toàn bộ thiết bị khác đã được đăng xuất an toàn.']);
     exit;
 }
 
