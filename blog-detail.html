@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Chiến lược kết hợp Performance Marketing và Trade Marketing: Tối ưu ROI từ Online đến Điểm bán (In-store) — Trương Bảo Ngọc" />
+  <base href="/" />
+  <link rel="canonical" id="canonical-url" href="https://ngoctb.io.vn/blog" />
   <title>Chiến lược kết hợp Performance & Trade Marketing | Trương Bảo Ngọc</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,7 +29,7 @@
         <li><a href="portfolio.html#expertise" class="nav-link">Chuyên môn</a></li>
         <li><a href="portfolio.html#experience" class="nav-link">Kinh nghiệm</a></li>
         <li><a href="portfolio.html#portfolio" class="nav-link">Portfolio</a></li>
-        <li><a href="blog.html" class="nav-link active">Kiến thức</a></li>
+        <li><a href="/blog" class="nav-link active">Kiến thức</a></li>
         <li><a href="portfolio.html#contact" class="nav-link">Liên hệ</a></li>
       </ul>
       <div class="nav-actions">
@@ -47,7 +49,7 @@
       <div class="blog-breadcrumb">
         <a href="/"><i class="fa-solid fa-house"></i> Trang chủ</a>
         <i class="fa-solid fa-chevron-right bread-sep"></i>
-        <a href="blog.html">Kiến thức</a>
+        <a href="/blog">Kiến thức</a>
         <i class="fa-solid fa-chevron-right bread-sep"></i>
         <span id="detail-breadcrumb-cat">Performance &amp; Trade Marketing</span>
       </div>
@@ -467,9 +469,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   rebindTocEvents();
 
-  // NẠP BÀI VIẾT ĐỘNG TỪ API THEO THAM SỐ URL ?slug=...
+  // NẠP BÀI VIẾT ĐỘNG TỪ API THEO THAM SỐ URL ?slug=... HOẶC ĐƯỜNG DẪN CHUẨN SEO /blog/:slug
   const urlParams = new URLSearchParams(window.location.search);
-  const postSlug = urlParams.get('slug');
+  let postSlug = urlParams.get('slug');
+
+  if (!postSlug) {
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const blogIdx = pathParts.findIndex(part => part === 'blog' || part === 'bai-viet');
+    if (blogIdx !== -1 && pathParts[blogIdx + 1]) {
+      postSlug = decodeURIComponent(pathParts[blogIdx + 1]).replace(/\.html$/, '');
+    } else if (pathParts.length > 0) {
+      const lastPart = pathParts[pathParts.length - 1];
+      if (lastPart !== 'blog-detail.html' && lastPart !== 'blog.html' && lastPart !== 'blog') {
+        postSlug = decodeURIComponent(lastPart).replace(/\.html$/, '');
+      }
+    }
+  }
+
+  // Tự động chuyển đổi URL trên thanh địa chỉ sang chuẩn SEO /blog/:slug (xóa bỏ ?slug= xấu)
+  if (postSlug && window.history && window.history.replaceState) {
+    if (window.location.search.includes('slug=')) {
+      window.history.replaceState({ slug: postSlug }, '', `/blog/${postSlug}`);
+    }
+  }
 
   async function loadPostDetailFromApi() {
     if (!postSlug) return;
@@ -479,6 +501,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.success && data.post) {
         const p = data.post;
         document.title = `${p.title} | Trương Bảo Ngọc`;
+
+        // Cập nhật Canonical URL và Meta Description chuẩn SEO Google
+        const canonicalEl = document.getElementById('canonical-url');
+        if (canonicalEl) canonicalEl.href = `https://ngoctb.io.vn/blog/${p.slug}`;
+        const metaDescEl = document.querySelector('meta[name="description"]');
+        if (metaDescEl && p.excerpt) metaDescEl.setAttribute('content', p.excerpt);
 
         // Tiêu đề & Tóm tắt
         const titleEl = document.getElementById('detail-title');

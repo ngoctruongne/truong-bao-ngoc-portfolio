@@ -471,7 +471,7 @@ if ($endpoint === 'posts' || strpos($endpoint, 'posts/') === 0) {
                 'title' => $title,
                 'slug' => $uniqueSlug
             ],
-            'postUrl' => "/blog-detail.html?slug={$uniqueSlug}"
+            'postUrl' => "/blog/{$uniqueSlug}"
         ]);
         exit;
     }

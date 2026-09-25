@@ -11,7 +11,17 @@
   # 3. Cho phép truy cập /admin mở admin.html
   RewriteRule ^admin/?$ admin.html [L]
 
-  # 4. Redirect 301 chuẩn hóa URL trang chủ (Loại bỏ index.html)
+  # 4. Redirect 301 các link cũ blog-detail.html?slug=... sang /blog/:slug chuẩn SEO
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /blog-detail\.html\?slug=([^&\ ]+) [NC]
+  RewriteRule ^blog-detail\.html$ /blog/%1? [R=301,L]
+
+  # 5. URL bài viết Blog chuẩn SEO (/blog/:slug hoặc /blog/:slug.html)
+  RewriteRule ^blog/([a-zA-Z0-9_-]+)(\.html)?/?$ blog-detail.html?slug=$1 [L,QSA]
+
+  # 6. URL danh mục kiến thức (/blog hoặc /blog/)
+  RewriteRule ^blog/?$ blog.html [L]
+
+  # 7. Redirect 301 chuẩn hóa URL trang chủ (Loại bỏ index.html)
   RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.html\ HTTP/
   RewriteRule ^index\.html$ / [R=301,L]
 </IfModule>

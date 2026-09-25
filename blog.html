@@ -24,7 +24,7 @@
         <li><a href="portfolio.html#expertise" class="nav-link">Chuyên môn</a></li>
         <li><a href="portfolio.html#experience" class="nav-link">Kinh nghiệm</a></li>
         <li><a href="portfolio.html#portfolio" class="nav-link">Portfolio</a></li>
-        <li><a href="blog.html" class="nav-link active">Kiến thức</a></li>
+        <li><a href="/blog" class="nav-link active">Kiến thức</a></li>
         <li><a href="portfolio.html#contact" class="nav-link">Liên hệ</a></li>
       </ul>
       <div class="nav-actions">
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <span class="blog-date">${dateStr}</span>
             </div>
             <h2 class="blog-title">
-              <a href="blog-detail.html?slug=${p.slug}">${p.title}</a>
+              <a href="/blog/${p.slug}">${p.title}</a>
             </h2>
             <p class="blog-excerpt">
               ${p.excerpt || ''}
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="assets/images/profile.jpg" alt="${p.author || 'Trương Bảo Ngọc'}" class="author-avatar" onerror="this.src='assets/images/profile.jpg'" />
                 <span>${p.author || 'Trương Bảo Ngọc'}</span>
               </div>
-              <a href="blog-detail.html?slug=${p.slug}" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
+              <a href="/blog/${p.slug}" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
             </div>
           </div>
         </article>
