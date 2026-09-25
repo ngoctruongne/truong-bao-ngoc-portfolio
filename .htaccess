@@ -1,12 +1,17 @@
-# Chuyển hướng 301 chuẩn hóa URL trang chủ (Loại bỏ index.html)
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Tự động map cổng Webhook của GitHub vào deploy.php
+  # 1. Cổng Webhook tự động deploy GitHub
   RewriteRule ^api/webhook/deploy/?$ deploy.php [L,QSA]
 
-  # Redirect 301 index.html về root
+  # 2. Điều hướng tất cả REST API (/api/...) vào api.php
+  RewriteRule ^api/(.*)$ api.php?endpoint=$1 [L,QSA]
+
+  # 3. Cho phép truy cập /admin mở admin.html
+  RewriteRule ^admin/?$ admin.html [L]
+
+  # 4. Redirect 301 chuẩn hóa URL trang chủ (Loại bỏ index.html)
   RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.html\ HTTP/
   RewriteRule ^index\.html$ / [R=301,L]
 </IfModule>
