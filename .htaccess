@@ -2,6 +2,11 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Tự động map cổng Webhook của GitHub vào deploy.php
+  RewriteRule ^api/webhook/deploy/?$ deploy.php [L,QSA]
+
+  # Redirect 301 index.html về root
   RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.html\ HTTP/
   RewriteRule ^index\.html$ / [R=301,L]
 </IfModule>
