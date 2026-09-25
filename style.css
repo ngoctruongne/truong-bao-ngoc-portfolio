@@ -610,85 +610,111 @@ html { scroll-behavior: smooth; }
 #ngoc-portfolio .about { background: var(--white); }
 #ngoc-portfolio .about-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 60px;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
   align-items: start;
 }
-#ngoc-portfolio .about-text p {
-  color: var(--ink2);
+#ngoc-portfolio .about-col-title {
+  font-size: 1.25rem;
+  font-weight: 800;
   margin-bottom: 20px;
-  font-size: 1.05rem;
-  line-height: 1.8;
+  color: var(--ink) !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.01em;
 }
-#ngoc-portfolio .about-text strong { color: var(--ink) !important; font-weight: 700; }
+#ngoc-portfolio .title-bar {
+  width: 4px;
+  height: 18px;
+  background: var(--core);
+  border-radius: 99px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+#ngoc-portfolio .about-lead {
+  color: var(--ink2);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+#ngoc-portfolio .about-lead strong {
+  color: var(--ink) !important;
+  font-weight: 700;
+}
 #ngoc-portfolio .about-highlights {
-  margin-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 #ngoc-portfolio .highlight-item {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   align-items: flex-start;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 16px 20px;
   transition: var(--transition);
 }
 #ngoc-portfolio .highlight-item:hover {
   border-color: rgba(244, 123, 26, 0.4);
   background: var(--white);
   box-shadow: var(--shadow);
-  transform: translateX(6px);
+  transform: translateX(4px);
 }
-#ngoc-portfolio .highlight-item > i {
-  width: 44px;
-  height: 44px;
+#ngoc-portfolio .highlight-num {
+  width: 38px;
+  height: 38px;
   background: rgba(244, 123, 26, 0.10);
   color: var(--core) !important;
-  border-radius: 12px;
+  border: 1px solid rgba(244, 123, 26, 0.25);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-family: var(--font-code, 'JetBrains Mono', monospace);
+  font-size: 0.95rem;
+  font-weight: 800;
   flex-shrink: 0;
+  transition: var(--transition);
 }
-#ngoc-portfolio .highlight-item strong {
+#ngoc-portfolio .highlight-item:hover .highlight-num {
+  background: var(--core);
+  color: #ffffff !important;
+  border-color: var(--core);
+  box-shadow: 0 4px 12px rgba(244, 123, 26, 0.35);
+}
+#ngoc-portfolio .highlight-content strong {
   display: block;
   color: var(--ink) !important;
   margin-bottom: 4px;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
-#ngoc-portfolio .highlight-item span {
-  font-size: 0.88rem;
+#ngoc-portfolio .highlight-content span {
+  font-size: 0.86rem;
   color: var(--muted);
+  line-height: 1.5;
+  display: block;
 }
 
-#ngoc-portfolio .skills-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin-bottom: 26px;
-  color: var(--ink) !important;
-  letter-spacing: -0.01em;
+#ngoc-portfolio .skill-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
 }
-#ngoc-portfolio .skill-bars { display: flex; flex-direction: column; gap: 20px; }
 #ngoc-portfolio .skill-bar-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--ink2);
 }
-#ngoc-portfolio .skill-bar-header span:last-child {
-  color: var(--core);
-  font-weight: 700;
-}
 #ngoc-portfolio .skill-bar-track {
-  height: 8px;
+  height: 7px;
   background: var(--paper2);
   border-radius: 99px;
   overflow: hidden;
@@ -700,6 +726,37 @@ html { scroll-behavior: smooth; }
   width: 0;
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+#ngoc-portfolio .skills-footer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+}
+#ngoc-portfolio .skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink2) !important;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+}
+#ngoc-portfolio .skill-tag:hover {
+  border-color: var(--core);
+  color: var(--core) !important;
+  background: var(--white);
+  transform: translateY(-2px);
+}
+#ngoc-portfolio .skill-tag i {
+  color: var(--core);
+  font-size: 0.8rem;
+}
+
 
 /* ===== EXPERTISE SECTION ===== */
 #ngoc-portfolio .expertise { background: var(--paper); }
