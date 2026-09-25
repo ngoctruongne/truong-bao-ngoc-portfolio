@@ -378,25 +378,31 @@ const server = http.createServer(async (req, res) => {
   // 3.5. TỰ ĐỘNG HÓA DEPLOY TỪ GITHUB WEBHOOK: /api/webhook/deploy
   if (pathname === '/api/webhook/deploy' && (req.method === 'POST' || req.method === 'GET')) {
     const { exec } = require('child_process');
-    console.log('[Webhook] Nhận tín hiệu từ GitHub, đang tự động chạy git pull...');
+    const isLinux = process.platform === 'linux';
+    const deployCmd = isLinux
+      ? 'git pull origin main && (cp -rf * /home/cuacongn/public_html/ 2>/dev/null || true)'
+      : 'git pull origin main';
 
-    exec('git pull origin main', { cwd: ROOT }, (err, stdout, stderr) => {
+    exec(deployCmd, { cwd: ROOT }, (err, stdout, stderr) => {
       if (err) {
         console.error('[Webhook] Lỗi khi kéo code:', err.message);
         return sendJson(res, 500, { success: false, error: err.message, stderr });
       }
-      console.log('[Webhook] Đã kéo code thành công:\n', stdout);
+      console.log('[Webhook] Đã kéo và đồng bộ code thành công:\n', stdout);
 
-      // Báo cho Phusion Passenger trên cPanel restart nếu cần
+      // Báo cho Phusion Passenger trên cPanel restart
       try {
         const tmpDir = path.join(ROOT, 'tmp');
         if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
         fs.writeFileSync(path.join(tmpDir, 'restart.txt'), String(Date.now()));
+        if (fs.existsSync('/home/cuacongn/public_html/tmp')) {
+          fs.writeFileSync('/home/cuacongn/public_html/tmp/restart.txt', String(Date.now()));
+        }
       } catch (e) {}
 
       return sendJson(res, 200, {
         success: true,
-        message: 'Hosting đã tự động cập nhật code mới nhất từ GitHub!',
+        message: 'Hosting đã tự động cập nhật code mới nhất từ GitHub và đồng bộ public_html!',
         output: stdout
       });
     });

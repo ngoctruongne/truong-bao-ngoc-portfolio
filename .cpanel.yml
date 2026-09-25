@@ -1,6 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/cuacongn/portfolio
-    - /bin/mkdir -p $DEPLOYPATH/tmp
-    - /bin/touch $DEPLOYPATH/tmp/restart.txt
+    - export DEPLOYPATH=/home/cuacongn/public_html
+    - /bin/cp -R * $DEPLOYPATH
+    - export APPPATH=/home/cuacongn/portfolio
+    - /bin/mkdir -p $APPPATH/tmp
+    - /bin/touch $APPPATH/tmp/restart.txt
