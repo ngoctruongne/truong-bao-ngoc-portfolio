@@ -53,8 +53,11 @@ if (function_exists('shell_exec') && !in_array('shell_exec', array_map('trim', e
     if (is_dir($portfolioDir)) {
         $gitRes = @shell_exec("cd {$portfolioDir} && git fetch origin main 2>&1 && git reset --hard origin/main 2>&1");
         $logs[] = "Git: " . trim($gitRes);
+        @shell_exec("rm -f {$publicHtmlDir}/data/blog.db-wal {$publicHtmlDir}/data/blog.db-shm {$portfolioDir}/data/blog.db-wal {$portfolioDir}/data/blog.db-shm");
         $cpRes = @shell_exec("cp -rf {$portfolioDir}/. {$publicHtmlDir}/ 2>&1 && cp -f {$portfolioDir}/.htaccess {$publicHtmlDir}/ 2>&1");
         $logs[] = "Sync to public_html: " . (empty($cpRes) ? "OK" : $cpRes);
+        @chmod("{$publicHtmlDir}/data", 0777);
+        @chmod("{$publicHtmlDir}/data/blog.db", 0666);
         @touch("{$portfolioDir}/tmp/restart.txt");
         $success = true;
     }

@@ -494,8 +494,12 @@ if ($endpoint === 'posts' || strpos($endpoint, 'posts/') === 0) {
             echo json_encode(['success' => false, 'error' => 'Không tìm thấy bài viết']);
             exit;
         }
-        $db->prepare('UPDATE posts SET views = views + 1 WHERE id = ?')->execute([$post['id']]);
-        $post['views']++;
+        try {
+            $db->prepare('UPDATE posts SET views = views + 1 WHERE id = ?')->execute([$post['id']]);
+            $post['views']++;
+        } catch (Exception $e) {
+            // Tiếp tục trả bài viết bình thường nếu không thể ghi tăng view
+        }
         echo json_encode(['success' => true, 'post' => $post]);
         exit;
     }
