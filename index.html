@@ -731,11 +731,11 @@
         position: relative !important;
       }
       .atom-container {
-        transform: scale(0.38) !important;
+        transform: scale(0.44) !important;
         transform-origin: center center !important;
         margin: auto !important;
         position: relative !important;
-        top: 10px !important;
+        top: 0px !important;
       }
 
       /* 3. BẢNG TRƯỢT CHI TIẾT MỞ TOÀN MÀN HÌNH - KHÔNG BỊ CHE KHUẤT */
@@ -792,7 +792,7 @@
 
     @media (max-width: 480px) {
       .atom-container {
-        transform: scale(0.33) !important;
+        transform: scale(0.40) !important;
       }
     }
   </style>
@@ -1223,6 +1223,8 @@
       Object.keys(electronElements).forEach(id => {
         if (id === moduleId) electronElements[id].classList.add('active-electron');
         else electronElements[id].classList.remove('active-electron');
+      });
+
       // Cập nhật nội dung panel
       pTitle.textContent = data.title;
       pSubtitle.textContent = data.subtitle;
