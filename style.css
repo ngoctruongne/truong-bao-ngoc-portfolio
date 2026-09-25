@@ -921,6 +921,36 @@ html { scroll-behavior: smooth; }
   font-size: 0.95rem;
   line-height: 1.7;
 }
+#ngoc-portfolio .timeline-case-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 8px 16px;
+  background: var(--white);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--core) !important;
+  text-decoration: none !important;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+#ngoc-portfolio .timeline-case-btn:hover {
+  background: var(--core);
+  color: #ffffff !important;
+  border-color: var(--core);
+  box-shadow: 0 4px 14px rgba(244, 123, 26, 0.35);
+  transform: translateY(-2px);
+}
+#ngoc-portfolio .timeline-case-btn i {
+  font-size: 0.8rem;
+  transition: transform 0.25s ease;
+}
+#ngoc-portfolio .timeline-case-btn:hover i {
+  transform: translate(2px, -2px);
+}
 
 /* ===== PORTFOLIO SECTION ===== */
 #ngoc-portfolio .portfolio { background: var(--paper); }
