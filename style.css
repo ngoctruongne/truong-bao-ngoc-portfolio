@@ -1211,6 +1211,7 @@ html { scroll-behavior: smooth; }
   #ngoc-portfolio .about-grid { grid-template-columns: 1fr; }
   #ngoc-portfolio .expertise-grid { grid-template-columns: repeat(2, 1fr); }
   #ngoc-portfolio .contact-grid { grid-template-columns: 1fr; }
+  #ngoc-portfolio .blog-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
 }
 
 @media (max-width: 768px) {
@@ -1226,12 +1227,54 @@ html { scroll-behavior: smooth; }
     border-bottom: 1px solid var(--line) !important;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
   }
+  #ngoc-portfolio.dark-theme .nav-menu {
+    background: rgba(9, 12, 21, 0.98) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
   #ngoc-portfolio .nav-menu.open { display: flex !important; }
   #ngoc-portfolio .nav-toggle { display: flex; }
-  #ngoc-portfolio .portfolio-grid { grid-template-columns: 1fr; }
-  #ngoc-portfolio .expertise-grid { grid-template-columns: 1fr; }
+  #ngoc-portfolio .portfolio-grid { grid-template-columns: 1fr !important; }
+  #ngoc-portfolio .expertise-grid { grid-template-columns: 1fr !important; }
+  
+  /* BẮT BUỘC 1 CỘT CHO BLOG CARD TRÊN MOBILE - KHÔNG BỊ BÓP MÉO */
+  #ngoc-portfolio .blog-grid {
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+  }
+  #ngoc-portfolio .blog-card.featured-blog {
+    grid-column: span 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  #ngoc-portfolio .blog-card-thumb,
+  #ngoc-portfolio .blog-card.featured-blog .blog-card-thumb {
+    height: 200px !important;
+    min-height: 200px !important;
+  }
+  #ngoc-portfolio .blog-card-body {
+    padding: 20px !important;
+  }
+  #ngoc-portfolio .blog-title {
+    font-size: 1.15rem !important;
+    min-height: auto !important;
+    line-height: 1.45 !important;
+  }
+  #ngoc-portfolio .blog-excerpt {
+    min-height: auto !important;
+    margin-bottom: 16px !important;
+    font-size: 0.9rem !important;
+  }
+  #ngoc-portfolio .blog-filters {
+    gap: 8px !important;
+    margin-bottom: 30px !important;
+  }
+  #ngoc-portfolio .bfilter-btn {
+    padding: 8px 16px !important;
+    font-size: 0.82rem !important;
+  }
+
   #ngoc-portfolio .tag1, #ngoc-portfolio .tag2, #ngoc-portfolio .tag3 { display: none; }
-  #ngoc-portfolio .section { padding: 75px 0; }
+  #ngoc-portfolio .section { padding: 55px 0; }
   #ngoc-portfolio .hero-stats { flex-direction: column; gap: 16px; width: 100%; text-align: center; }
   #ngoc-portfolio .stat-divider { width: 48px; height: 1px; }
   #ngoc-portfolio .timeline::before { left: 16px; }
