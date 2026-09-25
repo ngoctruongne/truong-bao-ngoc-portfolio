@@ -163,20 +163,7 @@
       box-shadow: 0 0 25px var(--core-orange);
       transform: translateY(-2px);
     }
-    .audio-btn {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-sub);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .audio-btn:hover {
-      color: var(--atom-cyan);
-      border-color: var(--atom-cyan);
-    }
+
 
     /* ===== ATOM STAGE (KHU VỰC NGUYÊN TỬ) ===== */
     .atom-stage {
@@ -744,11 +731,11 @@
         position: relative !important;
       }
       .atom-container {
-        transform: scale(0.42) !important;
+        transform: scale(0.38) !important;
         transform-origin: center center !important;
         margin: auto !important;
         position: relative !important;
-        top: 15px !important;
+        top: 10px !important;
       }
 
       /* 3. BẢNG TRƯỢT CHI TIẾT MỞ TOÀN MÀN HÌNH - KHÔNG BỊ CHE KHUẤT */
@@ -805,7 +792,7 @@
 
     @media (max-width: 480px) {
       .atom-container {
-        transform: scale(0.38) !important;
+        transform: scale(0.33) !important;
       }
     }
   </style>
@@ -833,9 +820,6 @@
         <a href="blog.html" class="hud-nav-link"><i class="fa-solid fa-book-open"></i> Kiến thức</a>
         <a href="portfolio.html#contact" class="hud-nav-link"><i class="fa-solid fa-paper-plane"></i> Liên hệ</a>
       </nav>
-      <button class="audio-btn" id="audioToggleBtn" title="Bật âm thanh tương tác Sci-Fi" style="color: var(--text-sub);">
-        <i class="fa-solid fa-volume-xmark"></i>
-      </button>
       <a href="portfolio.html" class="btn-action-hud btn-return-portfolio">
         <i class="fa-solid fa-briefcase"></i> Xem thêm tại Portfolio
       </a>
@@ -1110,46 +1094,7 @@
       }
     };
 
-    // ===== ÂM THANH NGUYÊN TỬ BẰNG WEB AUDIO API (MẶC ĐỊNH TẮT) =====
-    let audioAllowed = false;
-    let audioContext = null;
 
-    function getAudio() {
-      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioContext.state === 'suspended') audioContext.resume();
-      return audioContext;
-    }
-
-    function soundBeep(f = 700, d = 0.08) {
-      if (!audioAllowed) return;
-      try {
-        const ctx = getAudio();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(f, ctx.currentTime);
-        gain.gain.setValueAtTime(0.06, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + d);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + d);
-      } catch (e) {}
-    }
-
-    function soundResonance() {
-      if (!audioAllowed) return;
-      soundBeep(520, 0.06);
-      setTimeout(() => soundBeep(880, 0.08), 70);
-      setTimeout(() => soundBeep(1400, 0.14), 150);
-    }
-
-    const audioToggle = document.getElementById('audioToggleBtn');
-    audioToggle.addEventListener('click', () => {
-      audioAllowed = !audioAllowed;
-      audioToggle.innerHTML = audioAllowed ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-      audioToggle.style.color = audioAllowed ? 'var(--atom-cyan)' : 'var(--text-sub)';
-    });
 
     // ===== CANVAS NỀN HẠT LƯỢNG TỬ =====
     const cvs = document.getElementById('spaceCanvas');
@@ -1278,11 +1223,6 @@
       Object.keys(electronElements).forEach(id => {
         if (id === moduleId) electronElements[id].classList.add('active-electron');
         else electronElements[id].classList.remove('active-electron');
-      });
-
-      // Âm thanh
-      soundResonance();
-
       // Cập nhật nội dung panel
       pTitle.textContent = data.title;
       pSubtitle.textContent = data.subtitle;
@@ -1320,7 +1260,6 @@
 
       el.addEventListener('mouseenter', () => {
         hoveredNodeId = cfg.id;
-        soundBeep(900, 0.04);
         highlightOrbit(cfg.orbitIdx);
       });
 
@@ -1350,7 +1289,6 @@
         electronElements[id].classList.remove('active-electron');
       });
       if (centerHint) centerHint.style.display = 'flex';
-      soundBeep(450, 0.05);
     }
 
     panelCloseBtn.addEventListener('click', closePanel);
