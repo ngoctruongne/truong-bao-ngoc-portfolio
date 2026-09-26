@@ -58,7 +58,36 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS login_attempts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip TEXT NOT NULL,
+    username TEXT,
+    attempts INTEGER DEFAULT 1,
+    last_attempt INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS two_factor_pending (
+    token TEXT PRIMARY KEY,
+    admin_id INTEGER NOT NULL,
+    username TEXT NOT NULL,
+    expires_at INTEGER NOT NULL
+  );
 `);
+
+// Tự động nâng cấp bảng admins hỗ trợ 2FA
+try {
+  const cols = db.prepare("PRAGMA table_info(admins)").all().map(c => c.name);
+  if (!cols.includes('two_factor_enabled')) {
+    db.exec("ALTER TABLE admins ADD COLUMN two_factor_enabled INTEGER DEFAULT 0");
+  }
+  if (!cols.includes('two_factor_secret')) {
+    db.exec("ALTER TABLE admins ADD COLUMN two_factor_secret TEXT DEFAULT NULL");
+  }
+  if (!cols.includes('two_factor_backup_codes')) {
+    db.exec("ALTER TABLE admins ADD COLUMN two_factor_backup_codes TEXT DEFAULT NULL");
+  }
+} catch (err) {}
 
 // Hàm tạo Slug chuẩn tiếng Việt
 function generateSlug(text) {
@@ -360,14 +389,22 @@ function verifyAdmin(username, password) {
   if (!admin) return null;
 
   try {
-    const inputHash = hashPassword(password, admin.salt);
+    let inputHash;
+    if (admin.password_hash.length === 64) {
+      inputHash = crypto.createHash('sha256').update(password + admin.salt).digest('hex');
+    } else {
+      inputHash = hashPassword(password, admin.salt);
+    }
     const match = crypto.timingSafeEqual(Buffer.from(inputHash, 'hex'), Buffer.from(admin.password_hash, 'hex'));
     if (!match) return null;
 
     return {
       id: admin.id,
       username: admin.username,
-      name: admin.name
+      name: admin.name,
+      two_factor_enabled: Boolean(admin.two_factor_enabled),
+      two_factor_secret: admin.two_factor_secret,
+      two_factor_backup_codes: admin.two_factor_backup_codes
     };
   } catch (err) {
     return null;
@@ -461,8 +498,161 @@ function updateAdminProfile(adminId, { username, name }) {
 }
 
 function getAdminById(id) {
-  const stmt = db.prepare('SELECT id, username, name, created_at FROM admins WHERE id = ?');
+  const stmt = db.prepare('SELECT id, username, name, two_factor_enabled, two_factor_backup_codes, created_at FROM admins WHERE id = ?');
   return stmt.get(id);
+}
+
+// ===== HỖ TRỢ XÁC THỰC 2 BƯỚC (2FA - TOTP RFC 6238) =====
+
+function base32Decode(str) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let buffer = 0, bitsLeft = 0;
+  const bytes = [];
+  for (let c of str.toUpperCase()) {
+    if (c === '=' || c === ' ' || c === '-') continue;
+    let v = alphabet.indexOf(c);
+    if (v === -1) continue;
+    buffer = (buffer << 5) | v;
+    bitsLeft += 5;
+    if (bitsLeft >= 8) {
+      bitsLeft -= 8;
+      bytes.push((buffer >> bitsLeft) & 0xff);
+    }
+  }
+  return Buffer.from(bytes);
+}
+
+function generateTOTPSecret(length = 16) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const bytes = crypto.randomBytes(length);
+  let secret = '';
+  for (let i = 0; i < length; i++) {
+    secret += alphabet[bytes[i] % 32];
+  }
+  return secret;
+}
+
+function generateBackupCodes(count = 5) {
+  const codes = [];
+  for (let i = 0; i < count; i++) {
+    const p1 = crypto.randomBytes(2).toString('hex').toUpperCase();
+    const p2 = crypto.randomBytes(2).toString('hex').toUpperCase();
+    codes.push(`${p1}-${p2}`);
+  }
+  return codes;
+}
+
+function getTOTP(secret, slice) {
+  if (slice === undefined) {
+    slice = Math.floor(Date.now() / 30000);
+  }
+  const key = base32Decode(secret);
+  const buf = Buffer.alloc(8);
+  buf.writeBigUInt64BE(BigInt(slice));
+  const hmac = crypto.createHmac('sha1', key).update(buf).digest();
+  const offset = hmac[19] & 0x0f;
+  const val = ((hmac[offset] & 0x7f) << 24) |
+              ((hmac[offset + 1] & 0xff) << 16) |
+              ((hmac[offset + 2] & 0xff) << 8) |
+              (hmac[offset + 3] & 0xff);
+  return String(val % 1000000).padStart(6, '0');
+}
+
+function verifyTOTP(secret, code, discrepancy = 1) {
+  const cleanCode = String(code).trim();
+  if (cleanCode.length !== 6 || !/^\d{6}$/.test(cleanCode)) return false;
+  const currentSlice = Math.floor(Date.now() / 30000);
+  for (let i = -discrepancy; i <= discrepancy; i++) {
+    const calc = getTOTP(secret, currentSlice + i);
+    if (crypto.timingSafeEqual(Buffer.from(calc), Buffer.from(cleanCode))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function createPending2FA(adminId, username) {
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = Date.now() + 5 * 60 * 1000;
+  db.prepare('DELETE FROM two_factor_pending WHERE admin_id = ? OR expires_at < ?').run(adminId, Date.now());
+  db.prepare('INSERT INTO two_factor_pending (token, admin_id, username, expires_at) VALUES (?, ?, ?, ?)').run(token, adminId, username, expiresAt);
+  return token;
+}
+
+function verify2FA(tempToken, code) {
+  const pending = db.prepare('SELECT * FROM two_factor_pending WHERE token = ? AND expires_at > ?').get(tempToken, Date.now());
+  if (!pending) return { success: false, error: 'Phiên xác thực đã hết hạn hoặc không hợp lệ!' };
+
+  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(pending.admin_id);
+  if (!admin) return { success: false, error: 'Không tìm thấy tài khoản quản trị' };
+
+  let isValid = false;
+  let isBackup = false;
+
+  // Kiểm tra TOTP 6 số
+  if (verifyTOTP(admin.two_factor_secret, code)) {
+    isValid = true;
+  }
+
+  // Kiểm tra mã dự phòng
+  if (!isValid && admin.two_factor_backup_codes) {
+    try {
+      const backupCodes = JSON.parse(admin.two_factor_backup_codes) || [];
+      const cleanCode = code.toUpperCase().replace(/\s+/g, '-');
+      const idx = backupCodes.indexOf(cleanCode);
+      if (idx !== -1) {
+        isValid = true;
+        isBackup = true;
+        backupCodes.splice(idx, 1);
+        db.prepare('UPDATE admins SET two_factor_backup_codes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(JSON.stringify(backupCodes), admin.id);
+      }
+    } catch (e) {}
+  }
+
+  if (!isValid) {
+    return { success: false, error: 'Mã xác thực 2 lớp hoặc mã dự phòng không chính xác!' };
+  }
+
+  db.prepare('DELETE FROM two_factor_pending WHERE token = ?').run(tempToken);
+  const session = createSession(admin.id, admin.username);
+  return {
+    success: true,
+    token: session.token,
+    admin: {
+      id: admin.id,
+      username: admin.username,
+      name: admin.name,
+      two_factor_enabled: true
+    },
+    isBackup
+  };
+}
+
+function enable2FA(adminId, secret, code, backupCodes) {
+  if (!verifyTOTP(secret, code)) {
+    return { success: false, error: 'Mã 6 chữ số không khớp hoặc đã hết hạn!' };
+  }
+  db.prepare('UPDATE admins SET two_factor_enabled = 1, two_factor_secret = ?, two_factor_backup_codes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+    .run(secret, JSON.stringify(backupCodes), adminId);
+  return { success: true, message: 'Đã kích hoạt Xác thực 2 bước (2FA) thành công!' };
+}
+
+function disable2FA(adminId, password) {
+  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(adminId);
+  if (!admin) return { success: false, error: 'Không tìm thấy tài khoản' };
+
+  let inputHash;
+  if (admin.password_hash.length === 64) {
+    inputHash = crypto.createHash('sha256').update(password + admin.salt).digest('hex');
+  } else {
+    inputHash = hashPassword(password, admin.salt);
+  }
+  const match = crypto.timingSafeEqual(Buffer.from(inputHash, 'hex'), Buffer.from(admin.password_hash, 'hex'));
+  if (!match) return { success: false, error: 'Mật khẩu xác nhận không chính xác!' };
+
+  db.prepare('UPDATE admins SET two_factor_enabled = 0, two_factor_secret = NULL, two_factor_backup_codes = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+    .run(adminId);
+  return { success: true, message: 'Đã tắt Xác thực 2 bước.' };
 }
 
 module.exports = {
@@ -484,5 +674,14 @@ module.exports = {
   revokeSession,
   changeAdminPassword,
   updateAdminProfile,
-  getAdminById
+  getAdminById,
+  // 2FA
+  generateTOTPSecret,
+  generateBackupCodes,
+  getTOTP,
+  verifyTOTP,
+  createPending2FA,
+  verify2FA,
+  enable2FA,
+  disable2FA
 };

@@ -695,7 +695,17 @@
       <h1 class="login-title">TBN Central CMS</h1>
       <p class="login-subtitle">Hệ thống quản trị nội dung &amp; điều phối n8n tự động hóa dành riêng cho Quản trị viên</p>
 
+      <!-- Lockout Alert Banner (Ẩn mặc định, hiển thị khi bị khóa do sai quá 5 lần) -->
+      <div id="loginLockoutBanner" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 10px; padding: 12px 14px; margin-bottom: 20px; font-size: 0.85rem; color: #fca5a5; line-height: 1.4;">
+        <i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px; color: #ef4444;"></i>
+        <span id="lockoutText"></span>
+      </div>
+
+      <!-- BƯỚC 1: ĐĂNG NHẬP USERNAME & MẬT KHẨU -->
       <form id="loginForm">
+        <!-- HONEYPOT TRAP (Bẫy bot tự động điền form) -->
+        <input type="text" name="website_trap" id="loginTrap" style="display:none!important;position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
+
         <div class="form-group">
           <label class="form-label">Tên đăng nhập Admin</label>
           <div class="input-icon-wrap">
@@ -720,8 +730,34 @@
         </button>
       </form>
 
+      <!-- BƯỚC 2: XÁC THỰC 2 LỚP (2FA - TOTP / MÃ DỰ PHÒNG) -->
+      <form id="twoFactorForm" style="display: none;">
+        <div style="text-align: center; margin-bottom: 18px;">
+          <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(0, 240, 255, 0.12); border: 1px solid var(--cyan); display: inline-flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--cyan); margin-bottom: 12px; box-shadow: 0 0 20px rgba(0,240,255,0.25);">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Xác Thực 2 Lớp (2FA)</h3>
+          <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.4;">
+            Mở app <b>Google Authenticator</b> hoặc <b>Microsoft Authenticator</b> trên điện thoại để lấy mã 6 chữ số
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="text-align: center; display: block;">Mã 6 chữ số hoặc Mã khôi phục dự phòng</label>
+          <input type="text" id="twoFactorCode" class="form-input" placeholder="000000" maxlength="9" style="text-align: center; font-size: 1.45rem; letter-spacing: 5px; font-weight: 800; font-family: var(--font-code); color: var(--cyan); text-transform: uppercase;" autocomplete="one-time-code" required />
+        </div>
+
+        <button type="submit" class="btn-login-submit" id="btnVerify2FA">
+          <i class="fa-solid fa-shield-check"></i> Xác Nhận &amp; Đăng Nhập
+        </button>
+
+        <button type="button" class="btn-secondary" id="btnBackToLogin" style="width: 100%; justify-content: center; margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-arrow-left"></i> Quay lại nhập mật khẩu
+        </button>
+      </form>
+
       <div class="login-footer-hint">
-        <i class="fa-solid fa-shield"></i> Cơ chế chống dò mật khẩu: Nhập sai quá 5 lần tài khoản sẽ tự động khóa 15 phút.
+        <i class="fa-solid fa-shield"></i> Cơ chế Anti-Bot: Tự động khóa IP 15 phút nếu nhập sai quá 5 lần.
       </div>
     </div>
   </section>
@@ -924,6 +960,101 @@
             </form>
           </div>
 
+          <!-- CARD 3: XÁC THỰC 2 BƯỚC (2FA) -->
+          <div class="card-panel">
+            <div class="card-panel-header">
+              <div class="card-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+              </div>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                  <h3 style="font-size: 1.15rem; font-weight: 800;">Xác Thực 2 Bước (2FA)</h3>
+                  <span id="badge2FAStatus" style="font-size: 0.76rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-shield-xmark"></i> CHƯA BẬT
+                  </span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--muted);">Bảo vệ tài khoản bằng mã OTP 6 số theo thời gian thực (Google / Microsoft Authenticator)</p>
+              </div>
+            </div>
+
+            <div style="font-size: 0.84rem; color: var(--text-sub); line-height: 1.5; margin-bottom: 20px;">
+              <p style="margin-bottom: 10px;">
+                Khi kích hoạt, mỗi lần đăng nhập ngoài mật khẩu bạn sẽ cần nhập thêm mã 6 chữ số từ ứng dụng bảo mật trên điện thoại.
+              </p>
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                  <i class="fa-brands fa-google" style="color: #ea4335;"></i>
+                  <span>Hỗ trợ: Google Authenticator, Microsoft Authenticator, Authy, Apple Passwords.</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; color: var(--cyan);">
+                  <i class="fa-solid fa-key"></i>
+                  <span id="textBackupCodesSummary">Kèm 5 mã dự phòng khôi phục phòng khi mất điện thoại.</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="actions2FAOff" style="display: flex; gap: 10px;">
+              <button type="button" class="btn-action-primary" id="btnOpenSetup2FA" style="flex: 1; justify-content: center;">
+                <i class="fa-solid fa-qrcode"></i> Thiết Lập 2FA Ngay
+              </button>
+            </div>
+
+            <div id="actions2FAOn" style="display: none; flex-direction: column; gap: 10px;">
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn-secondary" id="btnViewBackupCodes" style="flex: 1; justify-content: center; display: inline-flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-ticket"></i> Xem Mã Dự Phòng
+                </button>
+                <button type="button" class="btn-secondary" id="btnDisable2FA" style="border-color: rgba(239, 68, 68, 0.4); color: #f87171; display: inline-flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-power-off"></i> Tắt 2FA
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: HỆ THỐNG ANTI-BOT & CHỐNG DÒ MẬT KHẨU -->
+          <div class="card-panel">
+            <div class="card-panel-header">
+              <div class="card-icon" style="background: rgba(0, 240, 255, 0.12); color: var(--cyan);">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                  <h3 style="font-size: 1.15rem; font-weight: 800;">Anti-Bot &amp; Chống Dò Pass</h3>
+                  <span style="font-size: 0.76rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #10b981; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-shield-check"></i> ĐANG BẢO VỆ
+                  </span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--muted);">Chủ động ngăn chặn tấn công tự động và dò quét mật khẩu</p>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;">
+                <i class="fa-solid fa-user-lock" style="color: var(--primary); font-size: 1.1rem; margin-top: 2px;"></i>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">Khóa IP Tự Động (Brute-Force Lockout)</div>
+                  <div style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Nhập sai quá 5 lần trong 15 phút sẽ tự động khóa địa chỉ IP và tài khoản trong 15 phút.</div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;">
+                <i class="fa-solid fa-spider" style="color: var(--cyan); font-size: 1.1rem; margin-top: 2px;"></i>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">Bẫy Bot Honeypot Tàng Hình</div>
+                  <div style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Trường ẩn vô hình với con người nhưng thu hút bot tự động, ngay lập tức chặn đứng tool cào.</div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;">
+                <i class="fa-solid fa-shield-virus" style="color: #10b981; font-size: 1.1rem; margin-top: 2px;"></i>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">Thuật toán Hash SHA-256 + Salt 128-bit</div>
+                  <div style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Chống tấn công Rainbow Table và Timing Attack (hash_equals).</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -1013,6 +1144,94 @@
         <button type="submit" form="postForm" class="btn-action-primary" id="btnSubmitPost">
           <i class="fa-solid fa-cloud-arrow-up"></i> Lưu Bài Viết
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CÀI ĐẶT 2FA -->
+  <div class="modal-overlay" id="modalSetup2FA">
+    <div class="modal-card" style="width: 540px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 800;">
+          <i class="fa-solid fa-mobile-screen-button" style="color: var(--cyan);"></i> Cài Đặt Xác Thực 2 Bước (2FA)
+        </h3>
+        <button class="action-btn" id="btnCloseSetup2FA"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body" style="gap: 16px;">
+        <!-- BƯỚC 1: QUÉT QR -->
+        <div>
+          <div style="font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 8px;">
+            1. Quét mã QR bằng ứng dụng Google Authenticator:
+          </div>
+          <div style="background: #ffffff; padding: 12px; border-radius: 12px; width: fit-content; margin: 0 auto; box-shadow: 0 0 25px rgba(0,240,255,0.2);">
+            <img id="qr2FAImg" src="" alt="2FA QR Code" style="display: block; width: 170px; height: 170px;" />
+          </div>
+          <div style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--muted);">
+            Hoặc nhập mã khóa thủ công nếu không quét được:
+            <div style="margin-top: 5px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); padding: 5px 12px; border-radius: 6px;">
+              <code id="secretKeyText" style="font-size: 0.95rem; font-weight: 800; color: var(--cyan); letter-spacing: 2px;"></code>
+              <button type="button" class="action-btn" id="btnCopySecretKey" title="Sao chép mã"><i class="fa-solid fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BƯỚC 2: MÃ DỰ PHÒNG -->
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">
+              2. Lưu 5 Mã Dự Phòng Khôi Phục (Backup Codes):
+            </div>
+            <button type="button" class="btn-secondary" id="btnCopyBackupCodes" title="Sao chép tất cả mã dự phòng" style="font-size: 0.75rem; color: var(--cyan); padding: 3px 8px;">
+              <i class="fa-solid fa-copy"></i> Sao chép
+            </button>
+          </div>
+          <div id="setupBackupCodesList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: var(--primary);">
+          </div>
+          <p style="font-size: 0.74rem; color: #fca5a5; margin-top: 6px;">
+            ⚠️ Hãy lưu 5 mã này. Mỗi mã dùng được 1 lần để đăng nhập dự phòng khi mất điện thoại.
+          </p>
+        </div>
+
+        <!-- BƯỚC 3: XÁC THỰC MÃ 6 SỐ -->
+        <div>
+          <label class="form-label">3. Nhập mã 6 chữ số từ app Authenticator để kích hoạt:</label>
+          <input type="text" id="confirm2FACode" class="form-input" placeholder="000000" maxlength="6" style="text-align: center; font-size: 1.3rem; letter-spacing: 4px; font-weight: 800; font-family: var(--font-code); color: var(--cyan);" />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btnCancelSetup2FA">Hủy Bỏ</button>
+        <button type="button" class="btn-action-primary" id="btnConfirmEnable2FA">
+          <i class="fa-solid fa-check"></i> Xác Nhận &amp; Kích Hoạt 2FA
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL XEM MÃ DỰ PHÒNG KHÔI PHỤC -->
+  <div class="modal-overlay" id="modalBackupCodes">
+    <div class="modal-card" style="width: 460px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 800;">
+          <i class="fa-solid fa-ticket" style="color: var(--primary);"></i> Mã Dự Phòng Khôi Phục (2FA)
+        </h3>
+        <button class="action-btn" id="btnCloseBackupCodes"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body" style="gap: 14px;">
+        <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.4;">
+          Đây là các mã dùng để đăng nhập dự phòng khi bạn không mang theo điện thoại có Google Authenticator. Mỗi mã chỉ dùng được một lần.
+        </p>
+        <div id="viewBackupCodesList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; font-family: monospace; font-size: 0.95rem; font-weight: 800; color: var(--primary);">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btnCopyViewBackupCodes">
+          <i class="fa-solid fa-copy"></i> Sao Chép Mã
+        </button>
+        <button type="button" class="btn-action-primary" id="btnDismissBackupCodes">Đóng</button>
       </div>
     </div>
   </div>
@@ -1109,6 +1328,8 @@
     function showLoginScreen() {
       screenLogin.style.display = 'flex';
       screenDashboard.style.display = 'none';
+      loginForm.style.display = 'block';
+      document.getElementById('twoFactorForm').style.display = 'none';
       loginPassword.value = '';
     }
 
@@ -1129,23 +1350,28 @@
 
       loadPosts();
       loadSettings();
+      load2FAStatus();
     }
 
     // ==========================================
-    // XỬ LÝ ĐĂNG NHẬP
+    // XỬ LÝ ĐĂNG NHẬP (BƯỚC 1: MẬT KHẨU)
     // ==========================================
+    let temp2FAToken = null;
+
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       btnLoginSubmit.disabled = true;
       btnLoginSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...';
 
       try {
+        const trapVal = document.getElementById('loginTrap') ? document.getElementById('loginTrap').value : '';
         const res = await apiFetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: loginUsername.value.trim(),
-            password: loginPassword.value
+            password: loginPassword.value,
+            website_trap: trapVal
           })
         });
 
@@ -1163,12 +1389,29 @@
         }
 
         if (data.success) {
+          document.getElementById('loginLockoutBanner').style.display = 'none';
+
+          // Nếu tài khoản đã kích hoạt Xác thực 2 bước (2FA)
+          if (data.require2FA) {
+            temp2FAToken = data.tempToken;
+            loginForm.style.display = 'none';
+            document.getElementById('twoFactorForm').style.display = 'block';
+            document.getElementById('twoFactorCode').value = '';
+            document.getElementById('twoFactorCode').focus();
+            showToast(data.message || 'Vui lòng nhập mã xác thực 2 lớp!');
+            return;
+          }
+
           authToken = data.token;
           currentAdmin = data.admin;
           localStorage.setItem('tbn_admin_token', authToken);
           showToast(`Xin chào ${data.admin.name || data.admin.username}!`);
           showDashboardScreen(data.admin, data.apiKey);
         } else {
+          if (data.locked) {
+            document.getElementById('loginLockoutBanner').style.display = 'block';
+            document.getElementById('lockoutText').textContent = data.error;
+          }
           showToast(data.error || 'Đăng nhập thất bại', true);
         }
       } catch (err) {
@@ -1176,6 +1419,59 @@
       } finally {
         btnLoginSubmit.disabled = false;
         btnLoginSubmit.innerHTML = '<i class="fa-solid fa-key"></i> Xác Thực Đăng Nhập';
+      }
+    });
+
+    // ==========================================
+    // XỬ LÝ ĐĂNG NHẬP (BƯỚC 2: XÁC THỰC 2FA / MÃ DỰ PHÒNG)
+    // ==========================================
+    const twoFactorForm = document.getElementById('twoFactorForm');
+    const twoFactorCode = document.getElementById('twoFactorCode');
+    const btnVerify2FA = document.getElementById('btnVerify2FA');
+    const btnBackToLogin = document.getElementById('btnBackToLogin');
+
+    btnBackToLogin.addEventListener('click', () => {
+      twoFactorForm.style.display = 'none';
+      loginForm.style.display = 'block';
+      temp2FAToken = null;
+    });
+
+    twoFactorForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = twoFactorCode.value.trim();
+      if (!code || !temp2FAToken) {
+        showToast('Vui lòng nhập mã xác thực 2 lớp!', true);
+        return;
+      }
+
+      btnVerify2FA.disabled = true;
+      btnVerify2FA.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...';
+
+      try {
+        const res = await apiFetch('/api/auth/verify-2fa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tempToken: temp2FAToken,
+            code: code
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          authToken = data.token;
+          currentAdmin = data.admin;
+          localStorage.setItem('tbn_admin_token', authToken);
+          showToast(data.message || 'Xác thực 2 lớp thành công!');
+          showDashboardScreen(data.admin, data.apiKey);
+        } else {
+          showToast(data.error || 'Mã xác thực không hợp lệ!', true);
+        }
+      } catch (err) {
+        showToast(err.message || 'Lỗi kết nối máy chủ', true);
+      } finally {
+        btnVerify2FA.disabled = false;
+        btnVerify2FA.innerHTML = '<i class="fa-solid fa-shield-check"></i> Xác Nhận &amp; Đăng Nhập';
       }
     });
 
@@ -1207,6 +1503,7 @@
         document.getElementById(`tab-${tab}`).classList.add('active');
         if (tab === 'n8n') loadSettings();
         if (tab === 'posts') loadPosts();
+        if (tab === 'security') load2FAStatus();
       });
     });
 
@@ -1541,6 +1838,188 @@
       } catch (err) {
         showToast('Lỗi kết nối máy chủ', true);
       }
+    });
+
+    // ==========================================
+    // QUẢN LÝ XÁC THỰC 2 BƯỚC (2FA) TRONG DASHBOARD
+    // ==========================================
+    let pendingSetupSecret = null;
+    let pendingSetupBackupCodes = [];
+
+    async function load2FAStatus() {
+      if (!authToken) return;
+      try {
+        const res = await apiFetch('/api/auth/2fa/status', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          const badge = document.getElementById('badge2FAStatus');
+          const offActions = document.getElementById('actions2FAOff');
+          const onActions = document.getElementById('actions2FAOn');
+          const summary = document.getElementById('textBackupCodesSummary');
+
+          if (data.enabled) {
+            badge.style.background = 'rgba(16, 185, 129, 0.15)';
+            badge.style.color = '#34d399';
+            badge.style.borderColor = '#10b981';
+            badge.innerHTML = '<i class="fa-solid fa-shield-check"></i> ĐANG BẬT';
+            offActions.style.display = 'none';
+            onActions.style.display = 'flex';
+            summary.textContent = `Đang kích hoạt bảo vệ. Còn ${data.backupCodesCount} mã dự phòng khả dụng.`;
+          } else {
+            badge.style.background = 'rgba(239, 68, 68, 0.15)';
+            badge.style.color = '#f87171';
+            badge.style.borderColor = '#ef4444';
+            badge.innerHTML = '<i class="fa-solid fa-shield-xmark"></i> CHƯA BẬT';
+            offActions.style.display = 'flex';
+            onActions.style.display = 'none';
+            summary.textContent = 'Kèm 5 mã dự phòng khôi phục phòng khi mất điện thoại.';
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Mở modal cài đặt 2FA
+    document.getElementById('btnOpenSetup2FA').addEventListener('click', async () => {
+      try {
+        const res = await apiFetch('/api/auth/2fa/setup', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          pendingSetupSecret = data.secret;
+          pendingSetupBackupCodes = data.backupCodes;
+
+          document.getElementById('qr2FAImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.otpauthUrl)}`;
+          document.getElementById('secretKeyText').textContent = data.secret;
+          
+          const codesList = document.getElementById('setupBackupCodesList');
+          codesList.innerHTML = data.backupCodes.map(code => `<div style="background: rgba(255,255,255,0.06); padding: 6px; border-radius: 6px;">${code}</div>`).join('');
+          
+          document.getElementById('confirm2FACode').value = '';
+          document.getElementById('modalSetup2FA').classList.add('open');
+        } else {
+          showToast(data.error || 'Không thể tạo mã cấu hình 2FA', true);
+        }
+      } catch (e) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    });
+
+    // Đóng modal cài đặt 2FA
+    document.getElementById('btnCloseSetup2FA').addEventListener('click', () => {
+      document.getElementById('modalSetup2FA').classList.remove('open');
+    });
+    document.getElementById('btnCancelSetup2FA').addEventListener('click', () => {
+      document.getElementById('modalSetup2FA').classList.remove('open');
+    });
+
+    // Xác nhận và kích hoạt 2FA
+    document.getElementById('btnConfirmEnable2FA').addEventListener('click', async () => {
+      const code = document.getElementById('confirm2FACode').value.trim();
+      if (!code) {
+        showToast('Vui lòng nhập mã 6 số từ Google Authenticator!', true);
+        return;
+      }
+
+      try {
+        const res = await apiFetch('/api/auth/2fa/enable', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            secret: pendingSetupSecret,
+            code: code,
+            backupCodes: pendingSetupBackupCodes
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message || 'Đã kích hoạt 2FA thành công!');
+          document.getElementById('modalSetup2FA').classList.remove('open');
+          load2FAStatus();
+        } else {
+          showToast(data.error || 'Kích hoạt thất bại', true);
+        }
+      } catch (e) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    });
+
+    // Tắt 2FA
+    document.getElementById('btnDisable2FA').addEventListener('click', async () => {
+      const password = prompt('Vui lòng nhập Mật khẩu Quản trị để xác nhận Tắt Xác thực 2 bước (2FA):');
+      if (!password) return;
+
+      try {
+        const res = await apiFetch('/api/auth/2fa/disable', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Đã tắt Xác thực 2 bước.');
+          load2FAStatus();
+        } else {
+          showToast(data.error || 'Mật khẩu không đúng', true);
+        }
+      } catch (e) {
+        showToast('Lỗi kết nối máy chủ', true);
+      }
+    });
+
+    // Xem danh sách mã dự phòng
+    document.getElementById('btnViewBackupCodes').addEventListener('click', async () => {
+      try {
+        const res = await apiFetch('/api/auth/2fa/backup-codes', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          const list = document.getElementById('viewBackupCodesList');
+          if (!data.backupCodes || data.backupCodes.length === 0) {
+            list.innerHTML = '<div style="grid-column: span 2; color: #f87171;">Bạn đã sử dụng hết toàn bộ mã dự phòng! Hãy tạo lại hoặc tắt/bật lại 2FA để cấp mã mới.</div>';
+          } else {
+            list.innerHTML = data.backupCodes.map(c => `<div style="background: rgba(255,255,255,0.06); padding: 8px; border-radius: 6px;">${c}</div>`).join('');
+          }
+          document.getElementById('modalBackupCodes').classList.add('open');
+        }
+      } catch (e) {
+        showToast('Lỗi tải mã dự phòng', true);
+      }
+    });
+
+    document.getElementById('btnCloseBackupCodes').addEventListener('click', () => {
+      document.getElementById('modalBackupCodes').classList.remove('open');
+    });
+    document.getElementById('btnDismissBackupCodes').addEventListener('click', () => {
+      document.getElementById('modalBackupCodes').classList.remove('open');
+    });
+
+    // Sao chép Secret Key
+    document.getElementById('btnCopySecretKey').addEventListener('click', () => {
+      const key = document.getElementById('secretKeyText').textContent;
+      navigator.clipboard.writeText(key).then(() => showToast('Đã sao chép Secret Key!'));
+    });
+
+    // Sao chép danh sách mã dự phòng khi setup
+    document.getElementById('btnCopyBackupCodes').addEventListener('click', () => {
+      const text = pendingSetupBackupCodes.join('\n');
+      navigator.clipboard.writeText(text).then(() => showToast('Đã sao chép 5 mã dự phòng!'));
+    });
+
+    // Sao chép danh sách mã dự phòng khi xem lại
+    document.getElementById('btnCopyViewBackupCodes').addEventListener('click', () => {
+      const codes = Array.from(document.getElementById('viewBackupCodesList').children).map(el => el.textContent.trim()).join('\n');
+      navigator.clipboard.writeText(codes).then(() => showToast('Đã sao chép mã dự phòng!'));
     });
 
     // Khởi chạy kiểm tra phiên

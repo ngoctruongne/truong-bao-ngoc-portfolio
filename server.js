@@ -202,6 +202,12 @@ const server = http.createServer(async (req, res) => {
       const body = await parseJsonBody(req);
       const username = body.username ? String(body.username).trim() : '';
       const password = body.password ? String(body.password) : '';
+      const honeypot = body.website_trap ? String(body.website_trap).trim() : '';
+
+      // 1. Chống Bot: Honeypot trap
+      if (honeypot) {
+        return sendJson(res, 403, { success: false, error: 'Phát hiện hành vi bất thường từ bot tự động!' });
+      }
 
       if (!username || !password) {
         return sendJson(res, 400, { success: false, error: 'Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!' });
@@ -210,6 +216,18 @@ const server = http.createServer(async (req, res) => {
       const admin = db.verifyAdmin(username, password);
       if (admin) {
         recordSuccessfulLogin(ip);
+
+        // Kiểm tra xem Admin có kích hoạt 2FA không
+        if (admin.two_factor_enabled && admin.two_factor_secret) {
+          const tempToken = db.createPending2FA(admin.id, admin.username);
+          return sendJson(res, 200, {
+            success: true,
+            require2FA: true,
+            tempToken,
+            message: 'Mật khẩu chính xác! Vui lòng nhập mã xác thực 2 lớp (TOTP) hoặc mã dự phòng.'
+          });
+        }
+
         const session = db.createSession(admin.id, admin.username);
         const apiKey = db.getSetting('n8n_api_key');
         console.log(`[Auth] 🟢 Admin "${admin.username}" đã đăng nhập thành công từ IP: ${ip}`);
@@ -219,7 +237,8 @@ const server = http.createServer(async (req, res) => {
           admin: {
             id: admin.id,
             username: admin.username,
-            name: admin.name
+            name: admin.name,
+            two_factor_enabled: false
           },
           apiKey,
           message: 'Đăng nhập Quản trị viên thành công!'
@@ -231,13 +250,126 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 401, {
           success: false,
           error: remaining > 0 
-            ? `Tên đăng nhập hoặc mật khẩu không chính xác! (Còn ${remaining} lần thử trước khi bị khóa tạm thời)`
-            : 'Tài khoản đã bị tạm khóa 15 phút do nhập sai quá 5 lần!'
+            ? `Tên đăng nhập hoặc mật khẩu không chính xác! (Còn ${remaining} lần thử trước khi bị khóa tạm thời 15 phút)`
+            : 'Tài khoản đã bị tạm khóa 15 phút do nhập sai quá 5 lần!',
+          remaining,
+          locked: (remaining === 0)
         });
       }
     } catch (e) {
       return sendJson(res, 400, { success: false, error: e.message });
     }
+  }
+
+  // 1.1.2. Xác minh bước 2 (2FA): POST /api/auth/verify-2fa
+  if (pathname === '/api/auth/verify-2fa' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const { tempToken, code } = body;
+      const result = db.verify2FA(tempToken, code);
+      if (result.success) {
+        const apiKey = db.getSetting('n8n_api_key');
+        const backupNote = result.isBackup ? ' (Bạn vừa dùng một mã khôi phục dự phòng)' : '';
+        return sendJson(res, 200, {
+          success: true,
+          token: result.token,
+          admin: result.admin,
+          apiKey,
+          message: 'Xác thực 2 lớp thành công! Chào mừng Quản trị viên.' + backupNote
+        });
+      } else {
+        return sendJson(res, 400, { success: false, error: result.error });
+      }
+    } catch (e) {
+      return sendJson(res, 400, { success: false, error: e.message });
+    }
+  }
+
+  // 1.1.3. Lấy trạng thái 2FA: GET /api/auth/2fa/status
+  if (pathname === '/api/auth/2fa/status' && req.method === 'GET') {
+    const auth = authenticateRequest(req);
+    if (!auth.authenticated || auth.role !== 'admin') {
+      return sendJson(res, 401, { success: false, error: 'Chưa đăng nhập' });
+    }
+    const admin = db.getAdminById(auth.admin.id);
+    const backupCodes = admin.two_factor_backup_codes ? JSON.parse(admin.two_factor_backup_codes) : [];
+    return sendJson(res, 200, {
+      success: true,
+      enabled: Boolean(admin.two_factor_enabled),
+      backupCodesCount: backupCodes.length
+    });
+  }
+
+  // 1.1.4. Khởi tạo cấu hình 2FA: POST /api/auth/2fa/setup
+  if (pathname === '/api/auth/2fa/setup' && req.method === 'POST') {
+    const auth = authenticateRequest(req);
+    if (!auth.authenticated || auth.role !== 'admin') {
+      return sendJson(res, 401, { success: false, error: 'Chưa đăng nhập' });
+    }
+    const secret = db.generateTOTPSecret(16);
+    const backupCodes = db.generateBackupCodes(5);
+    const otpauthUrl = `otpauth://totp/TBN%20CMS:${encodeURIComponent(auth.admin.username)}?secret=${secret}&issuer=${encodeURIComponent('TBN Central CMS')}`;
+    return sendJson(res, 200, {
+      success: true,
+      secret,
+      otpauthUrl,
+      backupCodes
+    });
+  }
+
+  // 1.1.5. Kích hoạt 2FA: POST /api/auth/2fa/enable
+  if (pathname === '/api/auth/2fa/enable' && req.method === 'POST') {
+    const auth = authenticateRequest(req);
+    if (!auth.authenticated || auth.role !== 'admin') {
+      return sendJson(res, 401, { success: false, error: 'Chưa đăng nhập' });
+    }
+    try {
+      const body = await parseJsonBody(req);
+      const { secret, code, backupCodes } = body;
+      const result = db.enable2FA(auth.admin.id, secret, code, backupCodes);
+      if (result.success) {
+        return sendJson(res, 200, { success: true, message: result.message });
+      } else {
+        return sendJson(res, 400, { success: false, error: result.error });
+      }
+    } catch (e) {
+      return sendJson(res, 400, { success: false, error: e.message });
+    }
+  }
+
+  // 1.1.6. Tắt 2FA: POST /api/auth/2fa/disable
+  if (pathname === '/api/auth/2fa/disable' && req.method === 'POST') {
+    const auth = authenticateRequest(req);
+    if (!auth.authenticated || auth.role !== 'admin') {
+      return sendJson(res, 401, { success: false, error: 'Chưa đăng nhập' });
+    }
+    try {
+      const body = await parseJsonBody(req);
+      const { password } = body;
+      const result = db.disable2FA(auth.admin.id, password);
+      if (result.success) {
+        return sendJson(res, 200, { success: true, message: result.message });
+      } else {
+        return sendJson(res, 400, { success: false, error: result.error });
+      }
+    } catch (e) {
+      return sendJson(res, 400, { success: false, error: e.message });
+    }
+  }
+
+  // 1.1.7. Xem mã dự phòng 2FA: GET /api/auth/2fa/backup-codes
+  if (pathname === '/api/auth/2fa/backup-codes' && req.method === 'GET') {
+    const auth = authenticateRequest(req);
+    if (!auth.authenticated || auth.role !== 'admin') {
+      return sendJson(res, 401, { success: false, error: 'Chưa đăng nhập' });
+    }
+    const admin = db.getAdminById(auth.admin.id);
+    const backupCodes = admin.two_factor_backup_codes ? JSON.parse(admin.two_factor_backup_codes) : [];
+    return sendJson(res, 200, {
+      success: true,
+      enabled: Boolean(admin.two_factor_enabled),
+      backupCodes
+    });
   }
 
   // 1.2. Kiểm tra phiên đăng nhập hiện tại: GET /api/auth/me

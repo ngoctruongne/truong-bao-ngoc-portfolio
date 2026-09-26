@@ -76,7 +76,34 @@ $db->exec("
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE IF NOT EXISTS login_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ip TEXT NOT NULL,
+        username TEXT,
+        attempts INTEGER DEFAULT 1,
+        last_attempt INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS two_factor_pending (
+        token TEXT PRIMARY KEY,
+        admin_id INTEGER NOT NULL,
+        username TEXT NOT NULL,
+        expires_at INTEGER NOT NULL
+    );
 ");
+
+// Tự động nâng cấp bảng admins hỗ trợ Xác thực 2 bước (2FA)
+try {
+    $cols = $db->query("PRAGMA table_info(admins)")->fetchAll(PDO::FETCH_COLUMN, 1);
+    if (!in_array('two_factor_enabled', $cols)) {
+        $db->exec("ALTER TABLE admins ADD COLUMN two_factor_enabled INTEGER DEFAULT 0");
+    }
+    if (!in_array('two_factor_secret', $cols)) {
+        $db->exec("ALTER TABLE admins ADD COLUMN two_factor_secret TEXT DEFAULT NULL");
+    }
+    if (!in_array('two_factor_backup_codes', $cols)) {
+        $db->exec("ALTER TABLE admins ADD COLUMN two_factor_backup_codes TEXT DEFAULT NULL");
+    }
+} catch (Exception $e) {}
 
 // Khởi tạo cấu hình mặc định nếu rỗng
 $stmt = $db->prepare('SELECT value FROM settings WHERE key = ?');
@@ -89,7 +116,7 @@ if (!$stmt->fetch()) {
 $adminCount = $db->query('SELECT COUNT(*) as count FROM admins')->fetchColumn();
 if ($adminCount == 0) {
     $salt = bin2hex(random_bytes(16));
-    // Lưu mật khẩu kép
+    // Lưu mật khẩu sha256 + salt
     $hash = hash('sha256', 'admin123' . $salt);
     $db->prepare('INSERT INTO admins (username, password_hash, salt, name) VALUES (?, ?, ?, ?)')
        ->execute(['admin', $hash, $salt, 'Trương Bảo Ngọc']);
@@ -99,6 +126,82 @@ if ($adminCount == 0) {
 function getJsonInput() {
     $raw = file_get_contents('php://input');
     return json_decode($raw, true) ?: [];
+}
+
+function getClientIp() {
+    $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    if (strpos($ip, ',') !== false) {
+        $ip = trim(explode(',', $ip)[0]);
+    }
+    return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '127.0.0.1';
+}
+
+function base32Decode($b32) {
+    $b32 = strtoupper(trim($b32));
+    $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    $binary = '';
+    $buffer = 0;
+    $bitsLeft = 0;
+    for ($i = 0; $i < strlen($b32); $i++) {
+        $char = $b32[$i];
+        if ($char === '=' || $char === ' ' || $char === '-') continue;
+        $val = strpos($alphabet, $char);
+        if ($val === false) continue;
+        $buffer = ($buffer << 5) | $val;
+        $bitsLeft += 5;
+        if ($bitsLeft >= 8) {
+            $bitsLeft -= 8;
+            $binary .= chr(($buffer >> $bitsLeft) & 0xFF);
+        }
+    }
+    return $binary;
+}
+
+function generateTOTPSecret($length = 16) {
+    $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    $secret = '';
+    $bytes = random_bytes($length);
+    for ($i = 0; $i < $length; $i++) {
+        $secret .= $alphabet[ord($bytes[$i]) % 32];
+    }
+    return $secret;
+}
+
+function generateBackupCodes($count = 5) {
+    $codes = [];
+    for ($i = 0; $i < $count; $i++) {
+        $codes[] = strtoupper(bin2hex(random_bytes(2))) . '-' . strtoupper(bin2hex(random_bytes(2)));
+    }
+    return $codes;
+}
+
+function getTOTPCode($secret, $timeSlice = null) {
+    if ($timeSlice === null) {
+        $timeSlice = floor(time() / 30);
+    }
+    $secretKey = base32Decode($secret);
+    $time = pack('N*', 0) . pack('N*', $timeSlice);
+    $hash = hash_hmac('sha1', $time, $secretKey, true);
+    $offset = ord($hash[19]) & 0x0f;
+    $binary = ((ord($hash[$offset]) & 0x7f) << 24) |
+              ((ord($hash[$offset + 1]) & 0xff) << 16) |
+              ((ord($hash[$offset + 2]) & 0xff) << 8) |
+              (ord($hash[$offset + 3]) & 0xff);
+    $otp = $binary % 1000000;
+    return str_pad((string)$otp, 6, '0', STR_PAD_LEFT);
+}
+
+function verifyTOTP($secret, $code, $discrepancy = 1) {
+    $code = trim((string)$code);
+    if (strlen($code) !== 6 || !ctype_digit($code)) return false;
+    $currentTimeSlice = floor(time() / 30);
+    for ($i = -$discrepancy; $i <= $discrepancy; $i++) {
+        $calc = getTOTPCode($secret, $currentTimeSlice + $i);
+        if (hash_equals($calc, $code)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function generateSlug($str) {
@@ -177,54 +280,361 @@ if ($endpoint === 'auth/login' && $method === 'POST') {
     $body = getJsonInput();
     $username = trim($body['username'] ?? '');
     $password = (string)($body['password'] ?? '');
+    $honeypot = trim($body['website_trap'] ?? '');
     
+    // 1. Chống Bot tự động: Honeypot trap
+    if (!empty($honeypot)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Phát hiện hành vi bất thường từ bot tự động!']);
+        exit;
+    }
+
     if (!$username || !$password) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!']);
         exit;
     }
-    
+
+    // 2. Chống Dò Mật Khẩu (Brute Force): Kiểm tra Rate Limit theo IP & Username
+    $ip = getClientIp();
+    $now = time();
+    $lockDuration = 900; // Khóa 15 phút nếu sai quá 5 lần
+    $maxAttempts = 5;
+
+    $stmt = $db->prepare('SELECT id, attempts, last_attempt FROM login_attempts WHERE ip = ? OR (username = ? AND username != "")');
+    $stmt->execute([$ip, $username]);
+    $attemptRecord = $stmt->fetch();
+    if ($attemptRecord) {
+        $elapsed = $now - $attemptRecord['last_attempt'];
+        if ($attemptRecord['attempts'] >= $maxAttempts && $elapsed < $lockDuration) {
+            $remainMin = ceil(($lockDuration - $elapsed) / 60);
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "Tài khoản hoặc IP của bạn đã bị tạm khóa 15 phút do thử đăng nhập sai quá {$maxAttempts} lần! Vui lòng thử lại sau {$remainMin} phút.",
+                'locked' => true,
+                'waitMinutes' => $remainMin
+            ]);
+            exit;
+        }
+        // Nếu đã hết hạn khóa 15 phút thì xóa bản ghi cũ
+        if ($elapsed >= $lockDuration) {
+            $db->prepare('DELETE FROM login_attempts WHERE id = ?')->execute([$attemptRecord['id']]);
+            $attemptRecord = null;
+        }
+    }
+
+    // 3. Kiểm tra thông tin đăng nhập
     $stmt = $db->prepare('SELECT * FROM admins WHERE username = ?');
     $stmt->execute([$username]);
     $admin = $stmt->fetch();
-    
+
     $valid = false;
     if ($admin) {
-        // Kiểm tra mật khẩu mã hóa sha256 + salt (chính xác tuyệt đối, không có backdoor)
         $calcHash = hash('sha256', $password . $admin['salt']);
         if (hash_equals($admin['password_hash'], $calcHash)) {
             $valid = true;
         }
     }
-    
-    if ($valid) {
-        // Tạo session 7 ngày
-        $token = bin2hex(random_bytes(32));
-        $expiresAt = time() + (7 * 24 * 3600);
-        $db->prepare('INSERT INTO admin_sessions (token, admin_id, username, expires_at) VALUES (?, ?, ?, ?)')
-           ->execute([$token, $admin['id'], $admin['username'], $expiresAt]);
-        
-        $apiKeyStmt = $db->prepare('SELECT value FROM settings WHERE key = ?');
-        $apiKeyStmt->execute(['n8n_api_key']);
-        $apiKey = $apiKeyStmt->fetchColumn();
-        
+
+    if (!$valid) {
+        // Ghi nhận số lần nhập sai
+        $curAttempts = $attemptRecord ? ($attemptRecord['attempts'] + 1) : 1;
+        if ($attemptRecord) {
+            $db->prepare('UPDATE login_attempts SET attempts = ?, last_attempt = ? WHERE id = ?')
+               ->execute([$curAttempts, $now, $attemptRecord['id']]);
+        } else {
+            $db->prepare('INSERT INTO login_attempts (ip, username, attempts, last_attempt) VALUES (?, ?, ?, ?)')
+               ->execute([$ip, $username, 1, $now]);
+        }
+
+        $remaining = max(0, $maxAttempts - $curAttempts);
+        $errorMsg = 'Tên đăng nhập hoặc mật khẩu không chính xác!';
+        if ($remaining > 0) {
+            $errorMsg .= " (Cảnh báo: Còn {$remaining} lần thử trước khi bị khóa tạm thời 15 phút)";
+        } else {
+            $errorMsg = 'Bạn đã nhập sai 5 lần! Tài khoản và IP đã bị khóa tạm thời trong 15 phút để bảo vệ hệ thống.';
+        }
+
+        http_response_code(401);
         echo json_encode([
-            'success' => true,
-            'token' => $token,
-            'admin' => [
-                'id' => $admin['id'],
-                'username' => $admin['username'],
-                'name' => $admin['name']
-            ],
-            'apiKey' => $apiKey,
-            'message' => 'Đăng nhập Quản trị viên thành công!'
+            'success' => false,
+            'error' => $errorMsg,
+            'remaining' => $remaining,
+            'locked' => ($remaining === 0)
         ]);
         exit;
-    } else {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'error' => 'Tên đăng nhập hoặc mật khẩu không chính xác!']);
+    }
+
+    // Đăng nhập hợp lệ: Xóa lịch sử lần sai
+    $db->prepare('DELETE FROM login_attempts WHERE ip = ? OR username = ?')->execute([$ip, $username]);
+
+    // 4. Kiểm tra Xác thực 2 bước (2FA)
+    if (!empty($admin['two_factor_enabled']) && !empty($admin['two_factor_secret'])) {
+        // Tạo token tạm thời (5 phút) để xác minh bước 2
+        $tempToken = bin2hex(random_bytes(32));
+        $db->prepare('DELETE FROM two_factor_pending WHERE admin_id = ? OR expires_at < ?')
+           ->execute([$admin['id'], $now]);
+        $db->prepare('INSERT INTO two_factor_pending (token, admin_id, username, expires_at) VALUES (?, ?, ?, ?)')
+           ->execute([$tempToken, $admin['id'], $admin['username'], $now + 300]);
+
+        echo json_encode([
+            'success' => true,
+            'require2FA' => true,
+            'tempToken' => $tempToken,
+            'message' => 'Mật khẩu chính xác! Vui lòng nhập mã xác thực 2 lớp (TOTP) từ ứng dụng Google Authenticator hoặc mã dự phòng.'
+        ]);
         exit;
     }
+
+    // Nếu không bật 2FA -> Cấp session 7 ngày
+    $token = bin2hex(random_bytes(32));
+    $expiresAt = time() + (7 * 24 * 3600);
+    $db->prepare('INSERT INTO admin_sessions (token, admin_id, username, expires_at) VALUES (?, ?, ?, ?)')
+       ->execute([$token, $admin['id'], $admin['username'], $expiresAt]);
+
+    $apiKeyStmt = $db->prepare('SELECT value FROM settings WHERE key = ?');
+    $apiKeyStmt->execute(['n8n_api_key']);
+    $apiKey = $apiKeyStmt->fetchColumn();
+
+    echo json_encode([
+        'success' => true,
+        'token' => $token,
+        'admin' => [
+            'id' => $admin['id'],
+            'username' => $admin['username'],
+            'name' => $admin['name'],
+            'two_factor_enabled' => false
+        ],
+        'apiKey' => $apiKey,
+        'message' => 'Đăng nhập Quản trị viên thành công!'
+    ]);
+    exit;
+}
+
+// 4.1.2. XÁC MINH BƯỚC 2 (2FA): POST /api/auth/verify-2fa
+if ($endpoint === 'auth/verify-2fa' && $method === 'POST') {
+    $body = getJsonInput();
+    $tempToken = trim($body['tempToken'] ?? '');
+    $code = strtoupper(trim($body['code'] ?? ''));
+
+    if (!$tempToken || !$code) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Vui lòng cung cấp mã xác minh 2 lớp!']);
+        exit;
+    }
+
+    $now = time();
+    $stmt = $db->prepare('SELECT * FROM two_factor_pending WHERE token = ? AND expires_at > ?');
+    $stmt->execute([$tempToken, $now]);
+    $pending = $stmt->fetch();
+    if (!$pending) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Phiên xác thực đã hết hạn (quá 5 phút). Vui lòng đăng nhập lại từ đầu!']);
+        exit;
+    }
+
+    $stmt = $db->prepare('SELECT * FROM admins WHERE id = ?');
+    $stmt->execute([$pending['admin_id']]);
+    $admin = $stmt->fetch();
+    if (!$admin) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'Không tìm thấy tài khoản quản trị!']);
+        exit;
+    }
+
+    $isValid = false;
+    $isBackupCode = false;
+
+    // 1. Kiểm tra mã TOTP 6 số
+    if (strlen($code) === 6 && ctype_digit($code)) {
+        if (verifyTOTP($admin['two_factor_secret'], $code)) {
+            $isValid = true;
+        }
+    }
+
+    // 2. Nếu không khớp TOTP, kiểm tra xem có phải Mã dự phòng (Backup code) không
+    if (!$isValid && !empty($admin['two_factor_backup_codes'])) {
+        $backupCodes = json_decode($admin['two_factor_backup_codes'], true) ?: [];
+        $cleanInputCode = str_replace(' ', '-', $code);
+        $foundIndex = array_search($cleanInputCode, $backupCodes);
+        if ($foundIndex !== false) {
+            $isValid = true;
+            $isBackupCode = true;
+            // Tiêu hủy mã dự phòng đã sử dụng
+            array_splice($backupCodes, $foundIndex, 1);
+            $db->prepare('UPDATE admins SET two_factor_backup_codes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+               ->execute([json_encode($backupCodes), $admin['id']]);
+        }
+    }
+
+    if (!$isValid) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Mã xác thực 2 lớp hoặc mã dự phòng không chính xác!']);
+        exit;
+    }
+
+    // Tiêu hủy pending token
+    $db->prepare('DELETE FROM two_factor_pending WHERE token = ?')->execute([$tempToken]);
+
+    // Tạo phiên đăng nhập chính thức 7 ngày
+    $token = bin2hex(random_bytes(32));
+    $expiresAt = time() + (7 * 24 * 3600);
+    $db->prepare('INSERT INTO admin_sessions (token, admin_id, username, expires_at) VALUES (?, ?, ?, ?)')
+       ->execute([$token, $admin['id'], $admin['username'], $expiresAt]);
+
+    $apiKeyStmt = $db->prepare('SELECT value FROM settings WHERE key = ?');
+    $apiKeyStmt->execute(['n8n_api_key']);
+    $apiKey = $apiKeyStmt->fetchColumn();
+
+    $backupWarning = $isBackupCode ? ' (Bạn vừa sử dụng một mã dự phòng khôi phục)' : '';
+
+    echo json_encode([
+        'success' => true,
+        'token' => $token,
+        'admin' => [
+            'id' => $admin['id'],
+            'username' => $admin['username'],
+            'name' => $admin['name'],
+            'two_factor_enabled' => true
+        ],
+        'apiKey' => $apiKey,
+        'message' => 'Xác thực 2 lớp thành công! Chào mừng Quản trị viên.' . $backupWarning
+    ]);
+    exit;
+}
+
+// 4.1.3. LẤY TRẠNG THÁI 2FA: GET /api/auth/2fa/status
+if ($endpoint === 'auth/2fa/status' && $method === 'GET') {
+    $auth = authenticate($db);
+    if (!$auth['authenticated'] || $auth['role'] !== 'admin') {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Chưa đăng nhập']);
+        exit;
+    }
+    $stmt = $db->prepare('SELECT two_factor_enabled, two_factor_backup_codes FROM admins WHERE id = ?');
+    $stmt->execute([$auth['admin']['id']]);
+    $admin = $stmt->fetch();
+    $backupCodes = !empty($admin['two_factor_backup_codes']) ? json_decode($admin['two_factor_backup_codes'], true) : [];
+    
+    echo json_encode([
+        'success' => true,
+        'enabled' => (bool)($admin['two_factor_enabled'] ?? false),
+        'backupCodesCount' => count($backupCodes)
+    ]);
+    exit;
+}
+
+// 4.1.4. KHỞI TẠO CẤU HÌNH 2FA: POST /api/auth/2fa/setup
+if ($endpoint === 'auth/2fa/setup' && $method === 'POST') {
+    $auth = authenticate($db);
+    if (!$auth['authenticated'] || $auth['role'] !== 'admin') {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Chưa đăng nhập']);
+        exit;
+    }
+    $secret = generateTOTPSecret(16);
+    $backupCodes = generateBackupCodes(5);
+    $username = $auth['admin']['username'];
+    $otpauthUrl = "otpauth://totp/TBN%20CMS:" . urlencode($username) . "?secret=" . $secret . "&issuer=" . urlencode("TBN Central CMS");
+
+    echo json_encode([
+        'success' => true,
+        'secret' => $secret,
+        'otpauthUrl' => $otpauthUrl,
+        'backupCodes' => $backupCodes
+    ]);
+    exit;
+}
+
+// 4.1.5. KÍCH HOẠT 2FA: POST /api/auth/2fa/enable
+if ($endpoint === 'auth/2fa/enable' && $method === 'POST') {
+    $auth = authenticate($db);
+    if (!$auth['authenticated'] || $auth['role'] !== 'admin') {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Chưa đăng nhập']);
+        exit;
+    }
+    $body = getJsonInput();
+    $secret = trim($body['secret'] ?? '');
+    $code = trim($body['code'] ?? '');
+    $backupCodes = $body['backupCodes'] ?? [];
+
+    if (!$secret || !$code) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Vui lòng cung cấp Secret và mã xác thực 6 số!']);
+        exit;
+    }
+
+    if (!verifyTOTP($secret, $code)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Mã 6 chữ số từ ứng dụng Authenticator không chính xác hoặc đã hết hạn! Vui lòng kiểm tra lại.']);
+        exit;
+    }
+
+    // Lưu vào database
+    $db->prepare('UPDATE admins SET two_factor_enabled = 1, two_factor_secret = ?, two_factor_backup_codes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+       ->execute([$secret, json_encode($backupCodes), $auth['admin']['id']]);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Kích hoạt Xác thực 2 bước (2FA) thành công! Tài khoản của bạn hiện đã được bảo vệ tối đa.'
+    ]);
+    exit;
+}
+
+// 4.1.6. TẮT 2FA: POST /api/auth/2fa/disable
+if ($endpoint === 'auth/2fa/disable' && $method === 'POST') {
+    $auth = authenticate($db);
+    if (!$auth['authenticated'] || $auth['role'] !== 'admin') {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Chưa đăng nhập']);
+        exit;
+    }
+    $body = getJsonInput();
+    $password = (string)($body['password'] ?? '');
+
+    // Xác thực mật khẩu admin trước khi tắt 2FA
+    $stmt = $db->prepare('SELECT * FROM admins WHERE id = ?');
+    $stmt->execute([$auth['admin']['id']]);
+    $admin = $stmt->fetch();
+
+    $calcHash = hash('sha256', $password . $admin['salt']);
+    if (!hash_equals($admin['password_hash'], $calcHash)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Mật khẩu xác nhận không chính xác!']);
+        exit;
+    }
+
+    $db->prepare('UPDATE admins SET two_factor_enabled = 0, two_factor_secret = NULL, two_factor_backup_codes = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+       ->execute([$auth['admin']['id']]);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Đã tắt Xác thực 2 bước (2FA) thành công.'
+    ]);
+    exit;
+}
+
+// 4.1.7. XEM MÃ DỰ PHÒNG: GET /api/auth/2fa/backup-codes
+if ($endpoint === 'auth/2fa/backup-codes' && $method === 'GET') {
+    $auth = authenticate($db);
+    if (!$auth['authenticated'] || $auth['role'] !== 'admin') {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Chưa đăng nhập']);
+        exit;
+    }
+    $stmt = $db->prepare('SELECT two_factor_backup_codes, two_factor_enabled FROM admins WHERE id = ?');
+    $stmt->execute([$auth['admin']['id']]);
+    $admin = $stmt->fetch();
+    $codes = !empty($admin['two_factor_backup_codes']) ? json_decode($admin['two_factor_backup_codes'], true) : [];
+    
+    echo json_encode([
+        'success' => true,
+        'enabled' => (bool)$admin['two_factor_enabled'],
+        'backupCodes' => $codes
+    ]);
+    exit;
 }
 
 // 4.2. KIỂM TRA PHIÊN: GET /api/auth/me
@@ -238,7 +648,12 @@ if ($endpoint === 'auth/me' && $method === 'GET') {
     $apiKeyStmt = $db->prepare('SELECT value FROM settings WHERE key = ?');
     $apiKeyStmt->execute(['n8n_api_key']);
     $apiKey = $apiKeyStmt->fetchColumn();
-    
+
+    $stmt = $db->prepare('SELECT two_factor_enabled FROM admins WHERE id = ?');
+    $stmt->execute([$auth['admin']['id']]);
+    $twoFactor = (bool)$stmt->fetchColumn();
+    $auth['admin']['two_factor_enabled'] = $twoFactor;
+
     echo json_encode([
         'success' => true,
         'admin' => $auth['admin'],
