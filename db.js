@@ -87,6 +87,10 @@ try {
   if (!cols.includes('two_factor_backup_codes')) {
     db.exec("ALTER TABLE admins ADD COLUMN two_factor_backup_codes TEXT DEFAULT NULL");
   }
+  const pcols = db.prepare("PRAGMA table_info(two_factor_pending)").all().map(c => c.name);
+  if (!pcols.includes('attempts')) {
+    db.exec("ALTER TABLE two_factor_pending ADD COLUMN attempts INTEGER DEFAULT 0");
+  }
 } catch (err) {}
 
 // Hàm tạo Slug chuẩn tiếng Việt

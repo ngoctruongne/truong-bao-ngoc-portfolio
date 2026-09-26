@@ -585,6 +585,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         rebindTocEvents();
+      } else if (data && data.success === false) {
+        document.title = 'Không tìm thấy bài viết | Trương Bảo Ngọc';
+        const titleEl = document.getElementById('detail-title');
+        if (titleEl) titleEl.textContent = 'Bài viết không tồn tại';
+        const subtitleEl = document.getElementById('detail-subtitle');
+        if (subtitleEl) subtitleEl.textContent = 'Đường dẫn bạn truy cập có thể đã bị thay đổi hoặc đã xóa.';
+        const contentEl = document.getElementById('article-content');
+        if (contentEl) {
+          contentEl.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px;">
+              <i class="fa-solid fa-file-circle-question" style="font-size: 3.5rem; color: var(--core); margin-bottom: 20px;"></i>
+              <h2 style="margin-bottom: 12px;">Nội dung không tồn tại hoặc đã được gỡ bỏ</h2>
+              <p style="color: var(--muted); margin-bottom: 30px; line-height: 1.6;">Rất tiếc, bài viết với đường dẫn này không tìm thấy trên hệ thống.</p>
+              <a href="/blog" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại Danh mục kiến thức
+              </a>
+            </div>
+          `;
+        }
       }
     } catch (err) {
       console.warn('Lỗi nạp bài viết chi tiết từ API:', err);

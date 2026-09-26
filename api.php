@@ -103,6 +103,10 @@ try {
     if (!in_array('two_factor_backup_codes', $cols)) {
         $db->exec("ALTER TABLE admins ADD COLUMN two_factor_backup_codes TEXT DEFAULT NULL");
     }
+    $pcols = $db->query("PRAGMA table_info(two_factor_pending)")->fetchAll(PDO::FETCH_COLUMN, 1);
+    if (!in_array('attempts', $pcols)) {
+        $db->exec("ALTER TABLE two_factor_pending ADD COLUMN attempts INTEGER DEFAULT 0");
+    }
 } catch (Exception $e) {}
 
 // Khởi tạo cấu hình mặc định nếu rỗng
@@ -224,10 +228,10 @@ function generateSlug($str) {
         'y'=>'ý|ỳ|ỷ|ỹ|ỵ'
     ];
     foreach($vietMap as $nonMark => $marks) {
-        $str = preg_replace("/($marks)/i", $nonMark, $str);
+        $str = preg_replace("/($marks)/iu", $nonMark, $str);
     }
-    $str = preg_replace('/[^a-z0-9\s-]/', '', $str);
-    $str = preg_replace('/[\s-]+/', '-', $str);
+    $str = preg_replace('/[^a-z0-9\s-]/u', '', $str);
+    $str = preg_replace('/[\s-]+/u', '-', $str);
     return trim($str, '-');
 }
 
@@ -309,7 +313,7 @@ if ($endpoint === 'auth/login' && $method === 'POST') {
     $lockDuration = 900; // Khóa 15 phút nếu sai quá 5 lần
     $maxAttempts = 5;
 
-    $stmt = $db->prepare('SELECT id, attempts, last_attempt FROM login_attempts WHERE ip = ? OR (username = ? AND username != "")');
+    $stmt = $db->prepare('SELECT id, attempts, last_attempt FROM login_attempts WHERE ip = ? OR (username = ? AND username != "") ORDER BY attempts DESC LIMIT 1');
     $stmt->execute([$ip, $username]);
     $attemptRecord = $stmt->fetch();
     if ($attemptRecord) {
@@ -477,8 +481,25 @@ if ($endpoint === 'auth/verify-2fa' && $method === 'POST') {
     }
 
     if (!$isValid) {
+        $curAttempts = ((int)($pending['attempts'] ?? 0)) + 1;
+        if ($curAttempts >= 5) {
+            $db->prepare('DELETE FROM two_factor_pending WHERE token = ?')->execute([$tempToken]);
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Bạn đã nhập sai mã xác thực 2 lớp quá 5 lần! Phiên xác thực đã bị hủy để bảo vệ tài khoản. Vui lòng đăng nhập lại từ đầu.',
+                'locked' => true
+            ]);
+            exit;
+        }
+        $db->prepare('UPDATE two_factor_pending SET attempts = ? WHERE token = ?')->execute([$curAttempts, $tempToken]);
+        $remaining = 5 - $curAttempts;
+
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Mã xác thực 2 lớp hoặc mã dự phòng không chính xác!']);
+        echo json_encode([
+            'success' => false,
+            'error' => "Mã xác thực 2 lớp hoặc mã dự phòng không chính xác! (Còn {$remaining} lần thử trước khi phiên bị hủy)"
+        ]);
         exit;
     }
 
@@ -1010,8 +1031,18 @@ if ($endpoint === 'posts' || strpos($endpoint, 'posts/') === 0) {
         $fields[] = 'updated_at = CURRENT_TIMESTAMP';
         $params[] = $id;
         $sql = 'UPDATE posts SET ' . implode(', ', $fields) . ' WHERE id = ?';
-        $db->prepare($sql)->execute($params);
-        echo json_encode(['success' => true, 'message' => 'Đã cập nhật bài viết']);
+        try {
+            $db->prepare($sql)->execute($params);
+            echo json_encode(['success' => true, 'message' => 'Đã cập nhật bài viết thành công']);
+        } catch (PDOException $e) {
+            if (strpos($e->getMessage(), 'UNIQUE constraint failed') !== false) {
+                http_response_code(409);
+                echo json_encode(['success' => false, 'error' => 'Đường dẫn (slug) này đã tồn tại ở một bài viết khác! Vui lòng chọn slug khác.']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'error' => 'Lỗi khi cập nhật cơ sở dữ liệu.']);
+            }
+        }
         exit;
     }
     
