@@ -1587,15 +1587,15 @@
         <tr>
           <td>
             <div class="post-cell">
-              <img src="${p.cover_image || 'assets/images/portfolio-banner.jpg'}" class="post-thumb" onerror="this.src='assets/images/portfolio-banner.jpg'" />
+              <img src="${p.cover_image ? encodeURI(p.cover_image) : 'assets/images/portfolio-banner.jpg'}" class="post-thumb" onerror="this.src='assets/images/portfolio-banner.jpg'" />
               <div>
                 <div class="post-meta-title">${escapeHtml(p.title)}</div>
-                <div class="post-meta-slug">/${p.slug}</div>
+                <div class="post-meta-slug">/${escapeHtml(p.slug)}</div>
               </div>
             </div>
           </td>
           <td>
-            <span style="font-size: 0.82rem; font-weight:700; color: var(--core);">${p.category}</span>
+            <span style="font-size: 0.82rem; font-weight:700; color: var(--core);">${escapeHtml(p.category || 'Chung')}</span>
           </td>
           <td>
             ${p.source === 'n8n' 
@@ -1603,16 +1603,16 @@
               : '<span class="badge-src badge-src-cms"><i class="fa-solid fa-user-pen"></i> Admin CMS</span>'}
           </td>
           <td>
-            <span style="font-family: var(--font-code); font-weight:700;">${p.views || 0}</span>
+            <span style="font-family: var(--font-code); font-weight:700;">${Number(p.views) || 0}</span>
           </td>
           <td style="font-size: 0.8rem; color: var(--muted);">
-            ${p.created_at ? p.created_at.split(' ')[0] : 'Vừa xong'}
+            ${p.created_at ? escapeHtml(p.created_at.split(' ')[0]) : 'Vừa xong'}
           </td>
           <td>
             <div class="table-actions">
-              <a href="/blog/${p.slug}" target="_blank" class="action-btn" title="Xem trước bài viết"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-              <button class="action-btn action-edit" onclick="openEditPost(${p.id})" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></button>
-              <button class="action-btn action-del" onclick="deletePost(${p.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+              <a href="/blog/${encodeURIComponent(p.slug)}" target="_blank" class="action-btn" title="Xem trước bài viết"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              <button class="action-btn action-edit" onclick="openEditPost(${Number(p.id)})" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-btn action-del" onclick="deletePost(${Number(p.id)})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
         </tr>
@@ -1621,7 +1621,12 @@
 
     function escapeHtml(str) {
       if (!str) return '';
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
     postSearch.addEventListener('input', debounce(() => loadPosts(), 300));

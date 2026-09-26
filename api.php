@@ -129,11 +129,19 @@ function getJsonInput() {
 }
 
 function getClientIp() {
-    $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-    if (strpos($ip, ',') !== false) {
-        $ip = trim(explode(',', $ip)[0]);
+    // Luôn ưu tiên REMOTE_ADDR (được thiết lập trực tiếp từ socket TCP của Web Server)
+    // để ngăn chặn hoàn toàn tấn công IP Spoofing qua header X-Forwarded-For
+    $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    
+    // Nếu có Cloudflare kết nối
+    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        $cfIp = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
+        if (filter_var($cfIp, FILTER_VALIDATE_IP)) {
+            return $cfIp;
+        }
     }
-    return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '127.0.0.1';
+    
+    return filter_var($remoteIp, FILTER_VALIDATE_IP) ? $remoteIp : '127.0.0.1';
 }
 
 function base32Decode($b32) {
@@ -785,16 +793,49 @@ if ($endpoint === 'upload' && $method === 'POST') {
         echo json_encode(['success' => false, 'error' => 'Thiếu dữ liệu imageBase64']);
         exit;
     }
-    $ext = '.jpg';
-    if (strpos($b64, 'image/png') !== false) $ext = '.png';
-    elseif (strpos($b64, 'image/webp') !== false) $ext = '.webp';
-    $b64 = preg_replace('#^data:image/\w+;base64,#i', '', $b64);
-    $data = base64_decode($b64);
-    
+
+    // Giới hạn dung lượng chuỗi Base64 tối đa 7MB (~5MB file nhị phân)
+    if (strlen($b64) > 7 * 1024 * 1024) {
+        http_response_code(413);
+        echo json_encode(['success' => false, 'error' => 'Dung lượng ảnh vượt quá giới hạn cho phép (tối đa 5MB)']);
+        exit;
+    }
+
+    $b64Clean = preg_replace('#^data:image/\w+;base64,#i', '', $b64);
+    $data = base64_decode($b64Clean, true);
+    if ($data === false || empty($data)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Dữ liệu ảnh base64 không hợp lệ']);
+        exit;
+    }
+
+    // Kiểm tra cấu trúc nhị phân thực tế của ảnh (Magic Bytes)
+    $imageInfo = @getimagesizefromstring($data);
+    if ($imageInfo === false) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Tệp tải lên không phải là định dạng hình ảnh hợp lệ']);
+        exit;
+    }
+
+    $mime = $imageInfo['mime'] ?? '';
+    $allowedMimes = [
+        'image/jpeg' => '.jpg',
+        'image/png'  => '.png',
+        'image/webp' => '.webp',
+        'image/gif'  => '.gif'
+    ];
+
+    if (!isset($allowedMimes[$mime])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Định dạng ảnh không được hỗ trợ. Chỉ chấp nhận JPEG, PNG, WEBP, GIF.']);
+        exit;
+    }
+
+    $ext = $allowedMimes[$mime];
     $uploadDir = __DIR__ . '/assets/uploads';
     if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
     
-    $filename = 'img_' . time() . '_' . bin2hex(random_bytes(4)) . $ext;
+    $filename = 'img_' . time() . '_' . bin2hex(random_bytes(6)) . $ext;
     file_put_contents($uploadDir . '/' . $filename, $data);
     $fileUrl = '/assets/uploads/' . $filename;
     

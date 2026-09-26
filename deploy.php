@@ -10,10 +10,12 @@ $secret = 'tbn_auto_deploy_2026';
 // Cho phép gọi trực tiếp qua query param hoặc từ GitHub Webhook
 $isAuthorized = false;
 
-if (isset($_GET['secret']) && $_GET['secret'] === $secret) {
+// 1. Cho phép xác thực qua Secret Query Param: ?secret=tbn_auto_deploy_2026
+if (isset($_GET['secret']) && hash_equals($secret, (string)$_GET['secret'])) {
     $isAuthorized = true;
 }
 
+// 2. Cho phép xác thực qua GitHub Webhook HMAC-SHA256
 $headers = function_exists('getallheaders') ? getallheaders() : [];
 $hubSig = $headers['X-Hub-Signature-256'] ?? $_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? '';
 
@@ -25,19 +27,13 @@ if (!$isAuthorized && !empty($hubSig)) {
     }
 }
 
-// Nếu không cấu hình secret trên GitHub thì chấp nhận nếu có header GitHub Event
-if (!$isAuthorized && (isset($_SERVER['HTTP_X_GITHUB_EVENT']) || isset($headers['X-GitHub-Event']) || isset($headers['x-github-event']))) {
-    $isAuthorized = true;
-}
-
-// Chấp nhận phương thức GET từ trình duyệt nếu có ?deploy=now
-if (isset($_GET['deploy']) && $_GET['deploy'] === 'now') {
-    $isAuthorized = true;
-}
-
+// Chặn tuyệt đối nếu không có xác thực hợp lệ
 if (!$isAuthorized && php_sapi_name() !== 'cli') {
-    http_response_code(200); // Trả về 200 cho ping test
-    die(json_encode(['status' => 'ready', 'message' => 'Webhook listener ready. Use POST from GitHub or GET ?deploy=now']));
+    http_response_code(403);
+    die(json_encode([
+        'status' => 'error',
+        'message' => 'Truy cập bị từ chối: Yêu cầu Secret Token hoặc GitHub Webhook Signature hợp lệ!'
+    ]));
 }
 
 header('Content-Type: application/json; charset=utf-8');
@@ -58,22 +54,6 @@ if (function_exists('shell_exec') && !in_array('shell_exec', array_map('trim', e
         $logs[] = "Sync to public_html: " . (empty($cpRes) ? "OK" : $cpRes);
         @chmod("{$publicHtmlDir}/data", 0777);
         @chmod("{$publicHtmlDir}/data/blog.db", 0666);
-        try {
-            $dbFile = "{$publicHtmlDir}/data/blog.db";
-            if (file_exists($dbFile)) {
-                $pDb = new PDO("sqlite:{$dbFile}");
-                $pDb->exec("DELETE FROM login_attempts");
-                $stmt = $pDb->prepare("SELECT salt FROM admins WHERE username = 'admin'");
-                $stmt->execute();
-                $salt = $stmt->fetchColumn();
-                if ($salt) {
-                    $newHash = hash('sha256', 'Admin@TBN2026!' . $salt);
-                    $pDb->prepare("UPDATE admins SET password_hash = ? WHERE username = 'admin'")->execute([$newHash]);
-                }
-            }
-        } catch (Exception $e) {
-            $logs[] = "DB Sync: " . $e->getMessage();
-        }
         @touch("{$portfolioDir}/tmp/restart.txt");
         $success = true;
     }

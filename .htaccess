@@ -1,6 +1,55 @@
+# ========================================================
+# 1. BẢO MẬT MÁY CHỦ & CHỐNG DUYỆT THƯ MỤC
+# ========================================================
+Options -Indexes -MultiViews
+
+# Chặn truy cập trực tiếp vào các file cơ sở dữ liệu và file tạm SQLite
+<FilesMatch "\.(db|sqlite|sqlite3|wal|shm|sql)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Chặn truy cập vào các file cấu hình, mã nguồn backend, môi trường, repo
+<FilesMatch "^(\.env|\.git|\.cpanel\.yml|package\.json|package-lock\.json|server\.js|db\.js|update-.*\.zip)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ========================================================
+# 2. HTTP SECURITY HEADERS (OWASP RECOMMENDATIONS)
+# ========================================================
+<IfModule mod_headers.c>
+    # Chống Clickjacking trên trang CMS và Website
+    Header set X-Frame-Options "SAMEORIGIN"
+    # Chống MIME-Type Sniffing
+    Header set X-Content-Type-Options "nosniff"
+    # Giới hạn thông tin chuyển tiếp Referrer
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    # Bảo vệ XSS cho trình duyệt cũ
+    Header set X-XSS-Protection "1; mode=block"
+    # Hạn chế quyền truy cập camera, mic, định vị
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# ========================================================
+# 3. URL REWRITING & ROUTING
+# ========================================================
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Chặn hoàn toàn truy cập trực tiếp bằng HTTP vào thư mục /data/
+  RewriteRule ^data(/.*)?$ - [F,L,NC]
 
   # 1. Cổng Webhook tự động deploy GitHub
   RewriteRule ^api/webhook/deploy/?$ deploy.php [L,QSA]

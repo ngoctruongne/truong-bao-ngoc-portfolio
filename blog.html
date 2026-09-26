@@ -337,6 +337,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function renderBlogCards(posts) {
     if (!blogGrid) return;
     blogGrid.innerHTML = posts.map((p, index) => {
@@ -347,32 +357,40 @@ document.addEventListener('DOMContentLoaded', () => {
         ? '<span class="blog-badge badge-orange"><i class="fa-solid fa-robot"></i> n8n Automation</span>'
         : (isFeatured ? '<span class="blog-badge badge-orange"><i class="fa-solid fa-fire"></i> Bài viết nổi bật</span>' : '');
 
+      const safeTitle = escapeHtml(p.title);
+      const safeCategory = escapeHtml(p.category || 'Chiến lược');
+      const safeExcerpt = escapeHtml(p.excerpt || '');
+      const safeAuthor = escapeHtml(p.author || 'Trương Bảo Ngọc');
+      const safeReadTime = escapeHtml(p.read_time || '5 phút đọc');
+      const safeSlug = encodeURIComponent(p.slug || '');
+      const safeCover = p.cover_image ? encodeURI(p.cover_image) : 'assets/images/portfolio-banner.jpg';
+
       return `
-        <article class="blog-card ${isFeatured ? 'featured-blog' : ''}" data-category="${catKey}" data-tags="${(p.tags || '') + ' ' + (p.category || '')}">
+        <article class="blog-card ${isFeatured ? 'featured-blog' : ''}" data-category="${catKey}" data-tags="${escapeHtml((p.tags || '') + ' ' + (p.category || ''))}">
           <div class="blog-card-thumb">
             ${badgeHtml}
-            <img src="${p.cover_image || 'assets/images/portfolio-banner.jpg'}" alt="${p.title}" onerror="this.onerror=null; this.src='assets/images/portfolio-banner.jpg';" />
+            <img src="${safeCover}" alt="${safeTitle}" onerror="this.onerror=null; this.src='assets/images/portfolio-banner.jpg';" />
           </div>
           <div class="blog-card-body">
             <div class="blog-meta">
-              <span class="blog-category">${p.category}</span>
+              <span class="blog-category">${safeCategory}</span>
               <span class="meta-dot">•</span>
-              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> ${p.read_time || '5 phút đọc'}</span>
+              <span class="blog-read-time"><i class="fa-regular fa-clock"></i> ${safeReadTime}</span>
               <span class="meta-dot">•</span>
               <span class="blog-date">${dateStr}</span>
             </div>
             <h2 class="blog-title">
-              <a href="/blog/${p.slug}">${p.title}</a>
+              <a href="/blog/${safeSlug}">${safeTitle}</a>
             </h2>
             <p class="blog-excerpt">
-              ${p.excerpt || ''}
+              ${safeExcerpt}
             </p>
             <div class="blog-card-footer">
               <div class="blog-author">
-                <img src="assets/images/profile.jpg" alt="${p.author || 'Trương Bảo Ngọc'}" class="author-avatar" onerror="this.src='assets/images/profile.jpg'" />
-                <span>${p.author || 'Trương Bảo Ngọc'}</span>
+                <img src="assets/images/profile.jpg" alt="${safeAuthor}" class="author-avatar" onerror="this.src='assets/images/profile.jpg'" />
+                <span>${safeAuthor}</span>
               </div>
-              <a href="/blog/${p.slug}" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
+              <a href="/blog/${safeSlug}" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>
             </div>
           </div>
         </article>

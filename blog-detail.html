@@ -515,6 +515,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const subtitleEl = document.getElementById('detail-subtitle');
         if (subtitleEl) subtitleEl.textContent = p.excerpt || '';
 
+        function escapeHtml(str) {
+          if (!str) return '';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        }
+
         // Breadcrumb chuyên mục & Badge
         const catBreadcrumb = document.getElementById('detail-breadcrumb-cat');
         if (catBreadcrumb) catBreadcrumb.textContent = p.category || 'Kiến thức chuyên sâu';
@@ -524,19 +534,19 @@ document.addEventListener('DOMContentLoaded', () => {
           if (p.source === 'n8n') {
             badgeEl.innerHTML = '<i class="fa-solid fa-robot"></i> n8n Automation';
           } else {
-            badgeEl.innerHTML = `<i class="fa-solid fa-bolt"></i> ${p.category || 'Chiến lược'}`;
+            badgeEl.innerHTML = `<i class="fa-solid fa-bolt"></i> ${escapeHtml(p.category || 'Chiến lược')}`;
           }
         }
 
         // Meta thông số (Ngày đăng, thời gian đọc, lượt xem)
         const dateEl = document.getElementById('detail-meta-date');
-        if (dateEl) dateEl.innerHTML = `<i class="fa-regular fa-calendar"></i> ${p.created_at ? p.created_at.split(' ')[0] : '23/09/2026'}`;
+        if (dateEl) dateEl.innerHTML = `<i class="fa-regular fa-calendar"></i> ${escapeHtml(p.created_at ? p.created_at.split(' ')[0] : '23/09/2026')}`;
 
         const readEl = document.getElementById('detail-meta-read');
-        if (readEl) readEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${p.read_time || '5 phút đọc'}`;
+        if (readEl) readEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${escapeHtml(p.read_time || '5 phút đọc')}`;
 
         const viewsEl = document.getElementById('detail-meta-views');
-        if (viewsEl) viewsEl.innerHTML = `<i class="fa-regular fa-eye"></i> ${(p.views || 1).toLocaleString()} lượt xem`;
+        if (viewsEl) viewsEl.innerHTML = `<i class="fa-regular fa-eye"></i> ${(Number(p.views) || 1).toLocaleString()} lượt xem`;
 
         // Tác giả
         const authorEl = document.getElementById('detail-author-name');
