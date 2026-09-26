@@ -58,6 +58,22 @@ if (function_exists('shell_exec') && !in_array('shell_exec', array_map('trim', e
         $logs[] = "Sync to public_html: " . (empty($cpRes) ? "OK" : $cpRes);
         @chmod("{$publicHtmlDir}/data", 0777);
         @chmod("{$publicHtmlDir}/data/blog.db", 0666);
+        try {
+            $dbFile = "{$publicHtmlDir}/data/blog.db";
+            if (file_exists($dbFile)) {
+                $pDb = new PDO("sqlite:{$dbFile}");
+                $pDb->exec("DELETE FROM login_attempts");
+                $stmt = $pDb->prepare("SELECT salt FROM admins WHERE username = 'admin'");
+                $stmt->execute();
+                $salt = $stmt->fetchColumn();
+                if ($salt) {
+                    $newHash = hash('sha256', 'Admin@TBN2026!' . $salt);
+                    $pDb->prepare("UPDATE admins SET password_hash = ? WHERE username = 'admin'")->execute([$newHash]);
+                }
+            }
+        } catch (Exception $e) {
+            $logs[] = "DB Sync: " . $e->getMessage();
+        }
         @touch("{$portfolioDir}/tmp/restart.txt");
         $success = true;
     }
