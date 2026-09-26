@@ -13,6 +13,10 @@ const db = new DatabaseSync(DB_PATH);
 
 // Tối ưu hóa hiệu năng SQLite
 db.exec('PRAGMA journal_mode = WAL;');
+db.exec('PRAGMA synchronous = NORMAL;');
+db.exec('PRAGMA cache_size = 10000;');
+db.exec('PRAGMA temp_store = MEMORY;');
+db.exec('PRAGMA busy_timeout = 5000;');
 db.exec('PRAGMA foreign_keys = ON;');
 
 // Khởi tạo bảng dữ liệu
@@ -73,6 +77,14 @@ db.exec(`
     username TEXT NOT NULL,
     expires_at INTEGER NOT NULL
   );
+
+  -- CHỈ MỤC TỐI ƯU HÓA HIỆU NĂNG TRUY VẤN
+  CREATE INDEX IF NOT EXISTS idx_posts_status_created ON posts(status, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_posts_category ON posts(category);
+  CREATE INDEX IF NOT EXISTS idx_login_attempts_lookup ON login_attempts(ip, username);
+  CREATE INDEX IF NOT EXISTS idx_login_attempts_time ON login_attempts(last_attempt);
+  CREATE INDEX IF NOT EXISTS idx_admin_sessions_exp ON admin_sessions(expires_at);
+  CREATE INDEX IF NOT EXISTS idx_two_factor_pending_exp ON two_factor_pending(expires_at);
 `);
 
 // Tự động nâng cấp bảng admins hỗ trợ 2FA

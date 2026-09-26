@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <article class="blog-card ${isFeatured ? 'featured-blog' : ''}" data-category="${catKey}" data-tags="${escapeHtml((p.tags || '') + ' ' + (p.category || ''))}">
           <div class="blog-card-thumb">
             ${badgeHtml}
-            <img src="${safeCover}" alt="${safeTitle}" onerror="this.onerror=null; this.src='assets/images/portfolio-banner.jpg';" />
+            <img src="${safeCover}" alt="${safeTitle}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='assets/images/portfolio-banner.jpg';" />
           </div>
           <div class="blog-card-body">
             <div class="blog-meta">
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </p>
             <div class="blog-card-footer">
               <div class="blog-author">
-                <img src="assets/images/profile.jpg" alt="${safeAuthor}" class="author-avatar" onerror="this.src='assets/images/profile.jpg'" />
+                <img src="assets/images/profile.jpg" alt="${safeAuthor}" class="author-avatar" loading="lazy" decoding="async" onerror="this.src='assets/images/profile.jpg'" />
                 <span>${safeAuthor}</span>
               </div>
               <a href="/blog/${safeSlug}" class="blog-read-more">Đọc bài viết <i class="fa-solid fa-arrow-right"></i></a>

@@ -558,6 +558,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const imgSrc = p.cover_image || 'assets/images/portfolio-banner.jpg';
           coverImgEl.src = imgSrc;
           coverImgEl.alt = p.title;
+          coverImgEl.loading = 'eager';
+          if ('fetchPriority' in coverImgEl) coverImgEl.fetchPriority = 'high';
         }
 
         // Nội dung bài viết

@@ -30,7 +30,12 @@ try {
     $db = new PDO('sqlite:' . $dbPath);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    // Tối ưu hóa SQLite cho tốc độ cao và giảm I/O đĩa
     $db->exec('PRAGMA journal_mode = WAL;');
+    $db->exec('PRAGMA synchronous = NORMAL;');
+    $db->exec('PRAGMA cache_size = 10000;');
+    $db->exec('PRAGMA temp_store = MEMORY;');
+    $db->exec('PRAGMA busy_timeout = 5000;');
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $e->getMessage()]);
@@ -89,6 +94,14 @@ $db->exec("
         username TEXT NOT NULL,
         expires_at INTEGER NOT NULL
     );
+
+    -- TỐI ƯU HÓA CHỈ MỤC (PERFORMANCE INDEXES) TĂNG TỐC TRUY VẤN
+    CREATE INDEX IF NOT EXISTS idx_posts_status_created ON posts(status, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_posts_category ON posts(category);
+    CREATE INDEX IF NOT EXISTS idx_login_attempts_lookup ON login_attempts(ip, username);
+    CREATE INDEX IF NOT EXISTS idx_login_attempts_time ON login_attempts(last_attempt);
+    CREATE INDEX IF NOT EXISTS idx_admin_sessions_exp ON admin_sessions(expires_at);
+    CREATE INDEX IF NOT EXISTS idx_two_factor_pending_exp ON two_factor_pending(expires_at);
 ");
 
 // Tự động nâng cấp bảng admins hỗ trợ Xác thực 2 bước (2FA)

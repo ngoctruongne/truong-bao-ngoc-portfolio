@@ -1227,6 +1227,7 @@
     }
 
     function renderCvs() {
+      if (document.hidden) return;
       ctx.clearRect(0, 0, cvs.width, cvs.height);
       particles.forEach(p => {
         p.alpha += p.sp;
@@ -1238,7 +1239,20 @@
       });
       requestAnimationFrame(renderCvs);
     }
-    window.addEventListener('resize', initCvs);
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(initCvs, 150);
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        requestAnimationFrame(renderCvs);
+        requestAnimationFrame(animateElectrons);
+      }
+    });
+
     initCvs();
     renderCvs();
 
@@ -1275,6 +1289,7 @@
     const atomCenter = { x: 450, y: 450 }; // Tâm của .atom-container (900x900)
 
     function animateElectrons() {
+      if (document.hidden) return;
       ORBIT_CONFIGS.forEach(cfg => {
         // Nếu không hover hay đang chọn module này thì di chuyển
         if (hoveredNodeId !== cfg.id) {
